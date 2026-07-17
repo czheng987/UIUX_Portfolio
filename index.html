@@ -348,9 +348,13 @@
       }
       .projects-main .project-title { font-size: 1rem; margin-bottom: 6px; }
       .projects-main .project-desc { font-size: 13px; margin-bottom: 10px; }
-      .projects-main .project-card--tall .project-screenshot { aspect-ratio: 4 / 5; }
+      .projects-main .projects-column { gap: 12px; }
+      .projects-main .project-card--tall .project-screenshot,
+      .projects-main .project-card--square .project-screenshot {
+        aspect-ratio: 16 / 10;
+        max-height: 118px;
+      }
       .projects-main .project-card--wide .project-screenshot { aspect-ratio: 16 / 9; }
-      .projects-main .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
     }
 
     .section-label {
@@ -475,6 +479,20 @@
     }
 
     /* ── Page 3: Contact ── */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+      width: 100%;
+      align-items: start;
+    }
+    @media (min-width: 900px) {
+      .contact-layout {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 48px;
+        align-items: center;
+      }
+    }
     .contact-heading {
       font-size: clamp(2.25rem, 8vw, 3.25rem);
       font-weight: 800;
@@ -486,22 +504,92 @@
       color: var(--muted);
       font-size: 1.05rem;
       line-height: 1.7;
-      margin-bottom: 40px;
+      margin-bottom: 28px;
       max-width: 420px;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-glow);
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+    .form-field textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-submit {
+      margin-top: 4px;
+      padding: 14px 20px;
+      background: var(--gradient);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .form-submit:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+    .contact-sidebar-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
     .contact-links {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
     .contact-btn {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 18px 22px;
+      gap: 12px;
+      padding: 12px 14px;
       background: rgba(13, 15, 22, 0.72);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       color: var(--text);
       text-decoration: none;
       font-weight: 600;
@@ -509,25 +597,25 @@
       transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
     .contact-btn:hover {
-      transform: translateX(4px);
+      transform: translateX(3px);
       background: var(--surface-hover);
       border-color: var(--border-hover);
       box-shadow: var(--shadow-glow);
     }
     .contact-btn .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       background: var(--gradient-subtle);
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 16px;
       flex-shrink: 0;
     }
-    .contact-btn .label { font-size: 15px; font-weight: 700; }
-    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+    .contact-btn .label { font-size: 13px; font-weight: 700; }
+    .contact-btn .sub { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
 
     /* Tap zones for desktop */
     .tap-zone {
@@ -665,6 +753,22 @@
                   <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
                 </div>
               </article>
+
+              <article class="project-card project-card--wide">
+                <img
+                  class="project-screenshot"
+                  src="images/project-5.png"
+                  alt="Project Five screenshot"
+                  onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-5.png</div>'"
+                />
+                <div class="project-body">
+                  <h3 class="project-title">Project Five</h3>
+                  <p class="project-desc">
+                    A fifth project with the same wide layout as Project Four.
+                  </p>
+                  <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                </div>
+              </article>
             </div>
           </div>
         </div>
@@ -695,42 +799,67 @@
     </section>
 
     <!-- ═══ PAGE 3: CONTACT ═══ -->
+    <!-- Replace you@email.com in the form action with your real email -->
     <section class="slide slide--contact" aria-label="Contact">
-      <p class="section-label">Get in touch</p>
-      <h2 class="contact-heading">Let's work<br/><span class="gradient-text">together.</span></h2>
-      <p class="contact-sub">
-        Have a project in mind or just want to say hi? I'd love to hear from you.
-      </p>
+      <div class="contact-layout">
+        <div class="contact-main">
+          <p class="section-label">Get in touch</p>
+          <h2 class="contact-heading">Let's work<br/><span class="gradient-text">together.</span></h2>
+          <p class="contact-sub">
+            Have a project in mind or just want to say hi? Send me a message below.
+          </p>
 
-      <div class="contact-links">
-        <a class="contact-btn" href="mailto:you@email.com">
-          <span class="icon">✉️</span>
-          <span>
-            <div class="label">Email</div>
-            <div class="sub">you@email.com</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">
-          <span class="icon">💼</span>
-          <span>
-            <div class="label">LinkedIn</div>
-            <div class="sub">linkedin.com/in/yourprofile</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
-          <span class="icon">🐙</span>
-          <span>
-            <div class="label">GitHub</div>
-            <div class="sub">github.com/yourusername</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://twitter.com/yourhandle" target="_blank" rel="noopener">
-          <span class="icon">🐦</span>
-          <span>
-            <div class="label">Twitter / X</div>
-            <div class="sub">@yourhandle</div>
-          </span>
-        </a>
+          <form
+            class="contact-form"
+            action="https://formsubmit.co/you@email.com"
+            method="POST"
+          >
+            <input type="hidden" name="_subject" value="New message from your portfolio" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+
+            <div class="form-field">
+              <label for="contact-name">Name</label>
+              <input type="text" id="contact-name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-field">
+              <label for="contact-email">Email</label>
+              <input type="email" id="contact-email" name="email" placeholder="you@example.com" required />
+            </div>
+            <div class="form-field">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" placeholder="Tell me about your project..." required></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send message</button>
+          </form>
+        </div>
+
+        <div class="contact-sidebar">
+          <p class="contact-sidebar-title">Or reach me directly</p>
+          <div class="contact-links">
+            <a class="contact-btn" href="mailto:you@email.com">
+              <span class="icon">✉️</span>
+              <span>
+                <div class="label">Email</div>
+                <div class="sub">you@email.com</div>
+              </span>
+            </a>
+            <a class="contact-btn" href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">
+              <span class="icon">💼</span>
+              <span>
+                <div class="label">LinkedIn</div>
+                <div class="sub">linkedin.com/in/yourprofile</div>
+              </span>
+            </a>
+            <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
+              <span class="icon">🐙</span>
+              <span>
+                <div class="label">GitHub</div>
+                <div class="sub">github.com/yourusername</div>
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
