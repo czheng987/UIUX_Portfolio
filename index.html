@@ -4,30 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Chels Zheng — Portfolio</title>
+  <meta name="theme-color" content="#f4f5fb" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #06070b;
-      --bg-elevated: #0d0f16;
-      --surface: rgba(255, 255, 255, 0.04);
-      --surface-hover: rgba(255, 255, 255, 0.07);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.16);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #8b5cf6;
-      --accent-2: #06b6d4;
-      --accent-3: #f472b6;
-      --accent-soft: rgba(139, 92, 246, 0.18);
-      --gradient: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #f472b6 100%);
-      --gradient-subtle: linear-gradient(135deg, rgba(139,92,246,0.35), rgba(6,182,212,0.2));
-      --radius: 20px;
-      --radius-sm: 12px;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-      --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.15);
+      --bg: #f4f5fb;
+      --bg-elevated: #ffffff;
+      --surface: #ffffff;
+      --surface-muted: #eef0f6;
+      --surface-hover: #f8f9fd;
+      --border: rgba(15, 23, 42, 0.07);
+      --border-hover: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #7c3aed;
+      --accent-2: #2563eb;
+      --accent-3: #ec4899;
+      --accent-soft: rgba(124, 58, 237, 0.1);
+      --gradient: linear-gradient(135deg, #7c3aed 0%, #2563eb 48%, #ec4899 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(124,58,237,0.14), rgba(236,72,153,0.1));
+      --radius: 24px;
+      --radius-sm: 16px;
+      --radius-lg: 32px;
+      --shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 4px 20px rgba(15, 23, 42, 0.06);
+      --shadow-glow: 0 12px 36px rgba(124, 58, 237, 0.14);
+      --header-height: 96px;
     }
 
     html {
@@ -55,23 +60,32 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 50% at 15% 10%, rgba(139, 92, 246, 0.22), transparent 55%),
-        radial-gradient(ellipse 50% 45% at 85% 20%, rgba(6, 182, 212, 0.16), transparent 50%),
-        radial-gradient(ellipse 55% 40% at 50% 90%, rgba(244, 114, 182, 0.12), transparent 55%);
+        radial-gradient(ellipse 70% 55% at 10% 0%, rgba(124, 58, 237, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 95% 8%, rgba(37, 99, 235, 0.1), transparent 50%),
+        radial-gradient(ellipse 65% 45% at 50% 100%, rgba(236, 72, 153, 0.08), transparent 55%);
       pointer-events: none;
       z-index: 0;
     }
 
     .progress,
     .swipe-hint,
-    .stories {
+    .stories,
+    .app-header {
       position: relative;
       z-index: 1;
     }
 
-    .progress {
+    .app-header {
       position: fixed;
       z-index: 100;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding-top: env(safe-area-inset-top, 8px);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
     }
 
     .swipe-hint {
@@ -79,22 +93,60 @@
       z-index: 50;
     }
 
-    /* ── Progress bars (story style) ── */
-    .progress {
-      top: env(safe-area-inset-top, 12px);
-      left: 20px;
-      right: 20px;
+    .app-header .progress {
       display: flex;
-      gap: 8px;
-      padding-top: 10px;
+      gap: 6px;
+      padding: 8px 20px 6px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      border-radius: 0;
     }
+
+    .topbar-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px 14px;
+    }
+
+    .topbar-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 128px;
+      padding: 11px 22px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .topbar-link:hover {
+      background: var(--accent-soft);
+      border-color: rgba(124, 58, 237, 0.22);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .topbar-link:active {
+      transform: scale(0.97);
+    }
+
+    /* ── Page indicator (story-style) ── */
     .progress-segment {
       flex: 1;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
+      height: 5px;
+      background: var(--surface-muted);
       border-radius: 999px;
       overflow: hidden;
-      backdrop-filter: blur(8px);
     }
     .progress-fill {
       height: 100%;
@@ -102,23 +154,26 @@
       background: var(--gradient);
       border-radius: 999px;
       transition: width 0.35s ease;
-      box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
     }
     .progress-segment.done .progress-fill { width: 100%; }
     .progress-segment.active .progress-fill { width: 100%; }
 
     /* ── Swipe hint ── */
     .swipe-hint {
-      bottom: calc(env(safe-area-inset-bottom, 16px) + 72px);
+      bottom: calc(env(safe-area-inset-bottom, 12px) + 16px);
       left: 50%;
       transform: translateX(-50%);
       font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.02em;
       color: var(--muted);
       animation: pulse 2s ease infinite;
       pointer-events: none;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
     @keyframes pulse {
       0%, 100% { opacity: 0.4; }
@@ -134,7 +189,7 @@
     .slide {
       width: 100%;
       scroll-snap-align: start;
-      padding: 80px 24px calc(env(safe-area-inset-bottom, 16px) + 56px);
+      padding: calc(env(safe-area-inset-top, 8px) + var(--header-height) + 12px) 20px calc(env(safe-area-inset-bottom, 12px) + 24px);
     }
 
     @media (min-width: 768px) {
@@ -200,6 +255,17 @@
     }
     .intro-content {
       text-align: left;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    @media (min-width: 900px) {
+      .intro-content {
+        padding: 36px 32px;
+        box-shadow: var(--shadow);
+      }
     }
     .intro-photo {
       position: relative;
@@ -207,18 +273,18 @@
       max-width: 420px;
       margin: 0 auto;
       aspect-ratio: 4 / 5;
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: rgba(13, 15, 22, 0.72);
-      box-shadow: var(--shadow), var(--shadow-glow);
+      border: none;
+      background: var(--surface);
+      box-shadow: var(--shadow);
     }
     .intro-photo::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      padding: 2px;
+      padding: 3px;
       background: var(--gradient);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -246,7 +312,7 @@
       color: var(--muted);
       font-size: 14px;
       line-height: 1.5;
-      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+      background: var(--gradient-subtle);
     }
     .intro-photo-placeholder strong {
       color: var(--text);
@@ -254,26 +320,26 @@
     }
     .intro-photo-placeholder code {
       font-size: 12px;
-      color: #c4b5fd;
+      color: var(--accent);
     }
     .intro-name {
-      font-size: clamp(2.25rem, 9vw, 3.5rem);
+      font-size: clamp(2rem, 8vw, 3.25rem);
       font-weight: 800;
       letter-spacing: -0.04em;
-      margin-bottom: 10px;
-      line-height: 1.05;
+      margin-bottom: 8px;
+      line-height: 1.08;
     }
     .intro-role {
       font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
     .intro-tagline {
       max-width: 460px;
       color: var(--muted);
-      line-height: 1.7;
-      font-size: 1.05rem;
-      margin-bottom: 28px;
+      line-height: 1.65;
+      font-size: 1rem;
+      margin-bottom: 22px;
     }
     .intro-tags {
       display: flex;
@@ -283,20 +349,20 @@
       align-items: center;
     }
     .tag {
-      padding: 8px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      padding: 8px 14px;
+      background: var(--surface-muted);
+      border: none;
       border-radius: 999px;
       font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      backdrop-filter: blur(12px);
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      font-weight: 600;
+      color: var(--text);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
     .tag:hover {
-      border-color: rgba(139, 92, 246, 0.35);
-      color: var(--text);
-      background: var(--surface-hover);
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
     }
 
     /* ── Page 2: Projects + About split ── */
@@ -306,12 +372,22 @@
       gap: 40px;
       width: 100%;
     }
+    @media (max-width: 899px) {
+      .projects-main,
+      .contact-main {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        padding: 22px 18px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+      }
+    }
     @media (min-width: 900px) {
       .slide--projects {
         display: flex;
         align-items: center;
         min-height: 100dvh;
-        padding-top: 88px;
+        padding-top: calc(env(safe-area-inset-top, 8px) + var(--header-height) + 16px);
         padding-bottom: 48px;
       }
       .projects-layout {
@@ -321,7 +397,7 @@
       }
       .projects-sidebar-area {
         position: sticky;
-        top: 88px;
+        top: calc(env(safe-area-inset-top, 8px) + var(--header-height) + 8px);
         align-self: start;
         min-height: min(85dvh, 920px);
       }
@@ -336,11 +412,11 @@
         inset: 0;
         z-index: 20;
         display: block;
-        padding: 0;
-        background: transparent;
-        border: none;
-        border-radius: var(--radius);
-        box-shadow: none;
+        padding: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.25s ease, visibility 0.25s ease;
@@ -378,23 +454,22 @@
 
     .section-label {
       display: inline-block;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
+      font-size: 12px;
+      letter-spacing: 0.04em;
       font-weight: 700;
-      margin-bottom: 14px;
-      padding: 6px 12px;
+      margin-bottom: 12px;
+      padding: 8px 14px;
       border-radius: 999px;
       background: var(--accent-soft);
-      border: 1px solid rgba(139, 92, 246, 0.25);
-      color: #c4b5fd;
+      border: none;
+      color: var(--accent);
     }
     .section-title {
-      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-size: clamp(1.5rem, 4.5vw, 2rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 28px;
-      line-height: 1.1;
+      margin-bottom: 20px;
+      line-height: 1.15;
     }
 
     /* Project cards — split sections */
@@ -418,23 +493,24 @@
     }
     .project-card {
       width: 100%;
-      background: rgba(13, 15, 22, 0.72);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      backdrop-filter: blur(16px);
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       cursor: pointer;
     }
     .project-card:hover {
-      border-color: rgba(139, 92, 246, 0.45);
+      transform: translateY(-3px);
+      border-color: rgba(124, 58, 237, 0.15);
       box-shadow: var(--shadow), var(--shadow-glow);
     }
     .project-visual {
       position: relative;
       flex-shrink: 0;
       overflow: hidden;
-      background: rgba(13, 15, 22, 0.9);
+      background: var(--surface-muted);
       isolation: isolate;
     }
     .project-card--tall .project-visual { height: 260px; }
@@ -463,9 +539,9 @@
       height: 100%;
       color: var(--muted);
       font-size: 14px;
-      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
+      background: var(--gradient-subtle);
     }
-    .project-body { padding: 18px 20px 22px; }
+    .project-body { padding: 16px 18px 18px; }
     .project-title {
       font-size: 1.1rem;
       font-weight: 700;
@@ -481,12 +557,11 @@
 
     /* About section on page 2 */
     .about-block {
-      background: rgba(13, 15, 22, 0.72);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      backdrop-filter: blur(16px);
-      box-shadow: var(--shadow-glow);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
     }
     .about-block p {
       color: var(--muted);
@@ -535,12 +610,11 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      background: rgba(13, 15, 22, 0.72);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       padding: 24px;
-      backdrop-filter: blur(16px);
-      box-shadow: var(--shadow-glow);
+      box-shadow: var(--shadow-sm);
       position: relative;
       z-index: 2;
       pointer-events: auto;
@@ -551,32 +625,31 @@
       gap: 6px;
     }
     .form-field label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       color: var(--muted);
     }
     .form-field input,
     .form-field textarea {
       width: 100%;
-      padding: 12px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      padding: 14px 16px;
+      background: var(--surface-muted);
+      border: 1px solid transparent;
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: inherit;
       font-size: 15px;
       pointer-events: auto;
       -webkit-user-select: text;
-      user-select: text;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      user-select: auto;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
     .form-field input:focus,
     .form-field textarea:focus {
       outline: none;
-      border-color: rgba(139, 92, 246, 0.5);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+      background: var(--surface);
+      border-color: rgba(124, 58, 237, 0.35);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
     }
     .form-field textarea {
       min-height: 140px;
@@ -585,30 +658,37 @@
     }
     .form-field textarea::placeholder,
     .form-field input::placeholder {
-      color: rgba(148, 163, 184, 0.75);
+      color: rgba(100, 116, 139, 0.75);
     }
     .form-submit {
       margin-top: 4px;
-      padding: 14px 20px;
+      padding: 16px 20px;
       background: var(--gradient);
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: 999px;
       color: #fff;
       font-family: inherit;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-glow);
     }
     .form-submit:hover {
-      opacity: 0.92;
+      opacity: 0.95;
       transform: translateY(-1px);
     }
+    .form-submit:active {
+      transform: scale(0.98);
+    }
+    .contact-sidebar {
+      position: relative;
+      z-index: 3;
+      pointer-events: auto;
+    }
     .contact-sidebar-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 12px;
     }
@@ -621,48 +701,83 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
-      background: rgba(13, 15, 22, 0.72);
+      padding: 14px 16px;
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text);
       text-decoration: none;
       font-weight: 600;
-      backdrop-filter: blur(16px);
-      transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+      pointer-events: auto;
+      position: relative;
+      z-index: 3;
+      cursor: pointer;
     }
     .contact-btn:hover {
-      transform: translateX(3px);
+      transform: translateY(-2px);
       background: var(--surface-hover);
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-glow);
+      box-shadow: var(--shadow);
+    }
+    .contact-btn:active {
+      transform: scale(0.98);
     }
     .contact-btn .icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       background: var(--gradient-subtle);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
       flex-shrink: 0;
     }
-    .contact-btn .label { font-size: 13px; font-weight: 700; }
-    .contact-btn .sub { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+    .contact-btn .label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .contact-btn .sub {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .contact-btn-text {
+      display: block;
+      min-width: 0;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Story progress -->
-  <div class="progress" aria-hidden="true">
-    <div class="progress-segment active"><div class="progress-fill"></div></div>
-    <div class="progress-segment"><div class="progress-fill"></div></div>
-    <div class="progress-segment"><div class="progress-fill"></div></div>
-  </div>
+  <header class="app-header" id="appHeader">
+    <div class="progress" aria-hidden="true">
+      <div class="progress-segment active"><div class="progress-fill"></div></div>
+      <div class="progress-segment"><div class="progress-fill"></div></div>
+      <div class="progress-segment"><div class="progress-fill"></div></div>
+    </div>
+    <nav class="topbar-nav" aria-label="Quick links">
+      <a
+        class="topbar-link"
+        href="Resume.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Resume</a>
+      <a
+        class="topbar-link"
+        href="https://www.linkedin.com/in/chels-zheng-a91b02382/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >LinkedIn</a>
+    </nav>
+  </header>
 
-  <p class="swipe-hint" id="swipeHint">Scroll down ↓</p>
+  <p class="swipe-hint" id="swipeHint">Swipe up ↓</p>
 
   <div class="stories" id="stories">
 
@@ -854,7 +969,7 @@
           <p class="section-label">Get in touch</p>
           <h2 class="contact-heading">Let's work<br/><span class="gradient-text">together.</span></h2>
           <p class="contact-sub">
-            Have a project in mind or just want to say hi? Send me a message below.
+            Have a project in mind or just want to say hi? Send me a message below!
           </p>
 
           <form
@@ -885,18 +1000,22 @@
         <div class="contact-sidebar">
           <p class="contact-sidebar-title">Or reach me directly</p>
           <div class="contact-links">
-            <a class="contact-btn" href="czheng987@gmail.com">
+            <a
+              class="contact-btn"
+              id="emailContactLink"
+              href="mailto:czheng987@gmail.com?subject=Portfolio%20Inquiry"
+            >
               <span class="icon">✉️</span>
-              <span>
-                <div class="label">Email</div>
-                <div class="sub">you@email.com</div>
+              <span class="contact-btn-text">
+                <span class="label">Email</span>
+                <span class="sub">czheng987@gmail.com</span>
               </span>
             </a>
             <a class="contact-btn" href="https://www.linkedin.com/in/chels-zheng-a91b02382/" target="_blank" rel="noopener">
               <span class="icon">💼</span>
               <span>
                 <div class="label">LinkedIn</div>
-                <div class="sub">linkedin.com/in/yourprofile</div>
+                <div class="sub">https://www.linkedin.com/in/chels-zheng-a91b02382/</div>
               </span>
             </a>
             <!-- <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
@@ -971,6 +1090,15 @@
     });
 
     updateProgress(0);
+
+    // Reliable mailto handler (works better in embedded browsers / webviews)
+    const emailContactLink = document.getElementById('emailContactLink');
+    if (emailContactLink) {
+      emailContactLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.location.assign(emailContactLink.href);
+      });
+    }
 
     // Project hover preview — full image on right over About Me
     const projectsLayout = document.querySelector('.projects-layout');
