@@ -681,11 +681,6 @@
     .form-submit:active {
       transform: scale(0.98);
     }
-    .contact-sidebar {
-      position: relative;
-      z-index: 3;
-      pointer-events: auto;
-    }
     .contact-sidebar-title {
       font-size: 14px;
       font-weight: 700;
@@ -710,10 +705,6 @@
       font-weight: 600;
       box-shadow: var(--shadow-sm);
       transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-      pointer-events: auto;
-      position: relative;
-      z-index: 3;
-      cursor: pointer;
     }
     .contact-btn:hover {
       transform: translateY(-2px);
@@ -735,22 +726,8 @@
       font-size: 18px;
       flex-shrink: 0;
     }
-    .contact-btn .label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .contact-btn .sub {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 500;
-      margin-top: 2px;
-    }
-    .contact-btn-text {
-      display: block;
-      min-width: 0;
-    }
+    .contact-btn .label { font-size: 14px; font-weight: 700; }
+    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -795,9 +772,8 @@
           <div class="intro-tags">
             <span class="tag">UI/UX</span>
             <span class="tag">Figma</span>
-            <span class="tag">Prototyping</span>
-            <span class="tag">User Research</span>
-            <span class="tag">Accessibility</span>
+            <span class="tag">SwiftUI</span>
+                <span class="tag">Canva</span>
           </div>
         </div>
 
@@ -947,9 +923,9 @@
               <div class="skills-row">
                 <span class="tag">Wireframing</span>
                 <span class="tag">Mobile Design</span>
-                <span class="tag">SwiftUI</span>
-                <span class="tag">Canva</span>
-                <span class="tag">Design Systems</span>
+                 <span class="tag">Prototyping</span>
+            <span class="tag">User Research</span>
+            <span class="tag">Accessibility</span>
               </div>
             </div>
           </aside>
@@ -1000,15 +976,11 @@
         <div class="contact-sidebar">
           <p class="contact-sidebar-title">Or reach me directly</p>
           <div class="contact-links">
-            <a
-              class="contact-btn"
-              id="emailContactLink"
-              href="mailto:czheng987@gmail.com?subject=Portfolio%20Inquiry"
-            >
+            <a class="contact-btn" href="mailto:czheng987@gmail.com">
               <span class="icon">✉️</span>
-              <span class="contact-btn-text">
-                <span class="label">Email</span>
-                <span class="sub">czheng987@gmail.com</span>
+              <span>
+                <div class="label">Email</div>
+                <div class="sub">czheng987@gmail.com</div>
               </span>
             </a>
             <a class="contact-btn" href="https://www.linkedin.com/in/chels-zheng-a91b02382/" target="_blank" rel="noopener">
@@ -1090,15 +1062,6 @@
     });
 
     updateProgress(0);
-
-    // Reliable mailto handler (works better in embedded browsers / webviews)
-    const emailContactLink = document.getElementById('emailContactLink');
-    if (emailContactLink) {
-      emailContactLink.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.location.assign(emailContactLink.href);
-      });
-    }
 
     // Project hover preview — full image on right over About Me
     const projectsLayout = document.querySelector('.projects-layout');
