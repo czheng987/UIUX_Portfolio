@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Your Name — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(255,255,255,0.06);
+      --text: #f5f5f7;
+      --muted: rgba(245,245,247,0.65);
+      --accent: #6366f1;
+      --accent-soft: rgba(99,102,241,0.25);
+      --radius: 16px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Progress bars (story style) ── */
+    .progress {
+      position: fixed;
+      top: env(safe-area-inset-top, 12px);
+      left: 16px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      gap: 6px;
+      padding-top: 8px;
+    }
+    .progress-segment {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      border-radius: 2px;
+      transition: width 0.35s ease;
+    }
+    .progress-segment.done .progress-fill { width: 100%; }
+    .progress-segment.active .progress-fill { width: 100%; }
+
+    /* ── Swipe hint ── */
+    .swipe-hint {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 16px) + 72px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      z-index: 50;
+      animation: pulse 2s ease infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .swipe-hint.hidden { display: none; }
+
+    /* ── Story container ── */
+    .stories {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 300vh;
+      height: 300dvh;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .stories.no-transition { transition: none; }
+
+    .slide {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      flex-shrink: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 72px 24px calc(env(safe-area-inset-bottom, 16px) + 100px);
+    }
+
+    /* ── Slide backgrounds ── */
+    .slide--intro {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-soft), transparent),
+        var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .slide--projects {
+      background:
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(168,85,247,0.15), transparent),
+        var(--bg);
+    }
+    .slide--contact {
+      background:
+        radial-gradient(ellipse 60% 50% at 0% 100%, rgba(34,211,238,0.12), transparent),
+        var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ── Page 1: Intro ── */
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255,255,255,0.15);
+      margin-bottom: 24px;
+      box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+    }
+    .intro-name {
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .intro-role {
+      font-size: 1.125rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .intro-tagline {
+      max-width: 420px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+      margin-bottom: 32px;
+    }
+    .intro-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .tag {
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Page 2: Projects + About ── */
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    /* Project cards — Pinterest-style masonry */
+    .projects-grid {
+      columns: 2;
+      column-gap: 16px;
+      margin-bottom: 48px;
+    }
+    @media (min-width: 640px) {
+      .projects-grid { columns: 3; }
+    }
+    .project-card {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      display: inline-block;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .project-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99,102,241,0.4);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .project-screenshot {
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      background: rgba(0,0,0,0.3);
+    }
+    .project-card--tall .project-screenshot { aspect-ratio: 3 / 4; }
+    .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
+    .project-card--wide .project-screenshot { aspect-ratio: 16 / 10; }
+    .project-screenshot.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .project-body { padding: 16px 18px 20px; }
+    .project-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .project-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .project-link {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .project-link:hover { text-decoration: underline; }
+
+    /* About section on page 2 */
+    .about-block {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .about-block p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+    .about-block p:last-child { margin-bottom: 0; }
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    /* ── Page 3: Contact ── */
+    .contact-heading {
+      font-size: clamp(2rem, 7vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .contact-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      max-width: 400px;
+    }
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(99,102,241,0.4);
+    }
+    .contact-btn .icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .contact-btn .label { font-size: 15px; }
+    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+    /* Tap zones for desktop */
+    .tap-zone {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 30%;
+      z-index: 90;
+      cursor: pointer;
+    }
+    .tap-zone--top { top: 60px; }
+    .tap-zone--bottom { bottom: 80px; }
+  </style>
+</head>
+<body>
+
+  <!-- Story progress -->
+  <div class="progress" aria-hidden="true">
+    <div class="progress-segment active"><div class="progress-fill"></div></div>
+    <div class="progress-segment"><div class="progress-fill"></div></div>
+    <div class="progress-segment"><div class="progress-fill"></div></div>
+  </div>
+
+  <p class="swipe-hint" id="swipeHint">Swipe down ↓</p>
+
+  <!-- Tap zones (desktop) -->
+  <div class="tap-zone tap-zone--top"    data-dir="-1" aria-label="Previous"></div>
+  <div class="tap-zone tap-zone--bottom" data-dir="1"  aria-label="Next"></div>
+
+  <div class="stories" id="stories">
+
+    <!-- ═══ PAGE 1: INTRO ═══ -->
+    <section class="slide slide--intro" aria-label="Introduction">
+      <!-- Replace with your photo: src="images/avatar.jpg" -->
+      <img
+        class="avatar"
+        src="https://api.dicebear.com/7.x/notionists/svg?seed=You"
+        alt="Your Name"
+      />
+      <h1 class="intro-name">Your Name</h1>
+      <p class="intro-role">Product Designer & Developer</p>
+      <p class="intro-tagline">
+        I craft thoughtful digital experiences — from concept to shipped product.
+        Based in San Francisco, open to remote work.
+      </p>
+      <div class="intro-tags">
+        <span class="tag">UI/UX</span>
+        <span class="tag">React</span>
+        <span class="tag">Figma</span>
+        <span class="tag">Design Systems</span>
+      </div>
+    </section>
+
+    <!-- ═══ PAGE 2: PROJECTS + ABOUT ═══ -->
+    <section class="slide slide--projects" aria-label="Projects and About">
+      <p class="section-label">Selected Work</p>
+      <h2 class="section-title">Projects</h2>
+
+      <div class="projects-grid">
+
+        <!-- PROJECT 1 — replace screenshot src -->
+        <article class="project-card project-card--tall">
+          <img
+            class="project-screenshot"
+            src="images/project-1.png"
+            alt="Project One screenshot"
+            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
+          />
+          <div class="project-body">
+            <h3 class="project-title">Project One</h3>
+            <p class="project-desc">
+              A brief one-liner about what you built and the impact it had.
+            </p>
+            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+          </div>
+        </article>
+
+        <!-- PROJECT 2 -->
+        <article class="project-card project-card--wide">
+          <img
+            class="project-screenshot"
+            src="images/project-2.png"
+            alt="Project Two screenshot"
+            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
+          />
+          <div class="project-body">
+            <h3 class="project-title">Project Two</h3>
+            <p class="project-desc">
+              Another project summary — tech stack, role, or outcome.
+            </p>
+            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+          </div>
+        </article>
+
+        <!-- PROJECT 3 (duplicate block to add more) -->
+        <article class="project-card project-card--square">
+          <img
+            class="project-screenshot"
+            src="images/project-3.png"
+            alt="Project Three screenshot"
+            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
+          />
+          <div class="project-body">
+            <h3 class="project-title">Project Three</h3>
+            <p class="project-desc">
+              Optional third project — remove this card if you only need two.
+            </p>
+            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="section-label">About Me</p>
+      <h2 class="section-title">More about me</h2>
+      <div class="about-block">
+        <p>
+          I'm a designer-developer hybrid with 5+ years building products for
+          startups and agencies. I care about accessibility, performance, and
+          details that make interfaces feel effortless.
+        </p>
+        <p>
+          When I'm not designing, you'll find me hiking, reading sci-fi, or
+          contributing to open source.
+        </p>
+        <div class="skills-row">
+          <span class="tag">JavaScript</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Tailwind</span>
+          <span class="tag">Node.js</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PAGE 3: CONTACT ═══ -->
+    <section class="slide slide--contact" aria-label="Contact">
+      <p class="section-label">Get in touch</p>
+      <h2 class="contact-heading">Let's work<br/>together.</h2>
+      <p class="contact-sub">
+        Have a project in mind or just want to say hi? I'd love to hear from you.
+      </p>
+
+      <div class="contact-links">
+        <a class="contact-btn" href="mailto:you@email.com">
+          <span class="icon">✉️</span>
+          <span>
+            <div class="label">Email</div>
+            <div class="sub">you@email.com</div>
+          </span>
+        </a>
+        <a class="contact-btn" href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">
+          <span class="icon">💼</span>
+          <span>
+            <div class="label">LinkedIn</div>
+            <div class="sub">linkedin.com/in/yourprofile</div>
+          </span>
+        </a>
+        <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
+          <span class="icon">🐙</span>
+          <span>
+            <div class="label">GitHub</div>
+            <div class="sub">github.com/yourusername</div>
+          </span>
+        </a>
+        <a class="contact-btn" href="https://twitter.com/yourhandle" target="_blank" rel="noopener">
+          <span class="icon">🐦</span>
+          <span>
+            <div class="label">Twitter / X</div>
+            <div class="sub">@yourhandle</div>
+          </span>
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const TOTAL = 3;
+    let current = 0;
+
+    const stories   = document.getElementById('stories');
+    const segments  = document.querySelectorAll('.progress-segment');
+    const swipeHint = document.getElementById('swipeHint');
+
+    function goTo(index) {
+      current = Math.max(0, Math.min(TOTAL - 1, index));
+      stories.style.transform = `translateY(-${current * 100}dvh)`;
+
+      segments.forEach((seg, i) => {
+        seg.classList.remove('active', 'done');
+        if (i < current) seg.classList.add('done');
+        if (i === current) seg.classList.add('active');
+      });
+
+      if (current > 0) swipeHint.classList.add('hidden');
+      if (current === TOTAL - 1) swipeHint.textContent = '';
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function getActiveSlide() {
+      return stories.children[current];
+    }
+
+    function canNavigate(dir) {
+      const slide = getActiveSlide();
+      if (!slide || slide.scrollHeight <= slide.clientHeight + 1) return true;
+      const atTop = slide.scrollTop <= 0;
+      const atBottom = slide.scrollTop + slide.clientHeight >= slide.scrollHeight - 1;
+      return dir > 0 ? atBottom : atTop;
+    }
+
+    // Swipe detection
+    let startX = 0, startY = 0, dragging = false;
+
+    document.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dragging = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+      if (!dragging) return;
+      dragging = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      // Only vertical swipes (ignore horizontal intent)
+      if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx)) {
+        if (dy < 0 && canNavigate(1)) next();
+        else if (dy > 0 && canNavigate(-1)) prev();
+      }
+    }, { passive: true });
+
+    // Mouse wheel (desktop)
+    let wheelLock = false;
+    document.addEventListener('wheel', e => {
+      if (wheelLock) return;
+      if (Math.abs(e.deltaY) < 30) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      if (!canNavigate(dir)) return;
+      e.preventDefault();
+      wheelLock = true;
+      dir > 0 ? next() : prev();
+      setTimeout(() => { wheelLock = false; }, 500);
+    }, { passive: false });
+
+    // Tap zones
+    document.querySelectorAll('[data-dir]').forEach(el => {
+      el.addEventListener('click', () => {
+        const dir = parseInt(el.dataset.dir);
+        dir > 0 ? next() : prev();
+      });
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prev();
+    });
+
+    goTo(0);
+  </script>
+</body>
+</html>
