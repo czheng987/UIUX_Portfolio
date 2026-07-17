@@ -336,19 +336,9 @@
       .projects-main .project-title { font-size: 1rem; margin-bottom: 6px; }
       .projects-main .project-desc { font-size: 13px; margin-bottom: 0; }
       .projects-main .projects-stack { gap: 12px; }
-      .projects-main .project-card--tall .project-visual {
-        aspect-ratio: 3 / 4;
-        min-height: 220px;
-      }
-      .projects-main .project-card--square .project-visual {
-        aspect-ratio: 1 / 1;
-        min-height: 200px;
-      }
-      .projects-main .project-card--wide .project-visual { aspect-ratio: 16 / 9; }
-      .projects-main .project-card:hover .project-visual,
-      .projects-main .project-card:hover .project-screenshot {
-        max-height: min(420px, 50vh);
-      }
+      .projects-main .project-card--tall .project-visual { height: 240px; }
+      .projects-main .project-card--square .project-visual { height: 200px; }
+      .projects-main .project-card--wide .project-visual { height: 160px; }
     }
 
     .section-label {
@@ -406,38 +396,53 @@
       box-shadow: var(--shadow), var(--shadow-glow);
     }
     .project-visual {
+      position: relative;
+      flex-shrink: 0;
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
-      transition: aspect-ratio 0.35s ease, min-height 0.35s ease;
+      background: rgba(13, 15, 22, 0.9);
+      isolation: isolate;
     }
-    .project-card--tall .project-visual { aspect-ratio: 3 / 4; min-height: 200px; }
-    .project-card--square .project-visual { aspect-ratio: 1 / 1; min-height: 180px; }
-    .project-card--wide .project-visual { aspect-ratio: 16 / 10; }
-    .project-card:hover .project-visual {
-      aspect-ratio: auto;
-      min-height: 0;
-      max-height: min(480px, 55vh);
-    }
+    .project-card--tall .project-visual { height: 260px; }
+    .project-card--square .project-visual { height: 220px; }
+    .project-card--wide .project-visual { height: 180px; }
     .project-screenshot {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center;
       display: block;
-      transition: object-fit 0.35s ease, transform 0.35s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
-    .project-card:hover .project-screenshot {
-      object-fit: contain;
-      height: auto;
-      max-height: min(480px, 55vh);
-      transform: scale(1);
+    @media (hover: hover) {
+      .project-visual::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(13, 15, 22, 0.88);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .project-card:hover .project-visual::after,
+      .project-card:focus-within .project-visual::after {
+        opacity: 1;
+      }
+      .project-card:hover .project-screenshot,
+      .project-card:focus-within .project-screenshot {
+        object-fit: contain;
+      }
     }
     .project-screenshot.placeholder {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100%;
+      height: 100%;
       color: var(--muted);
       font-size: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
     }
     .project-body { padding: 18px 20px 22px; }
     .project-title {
