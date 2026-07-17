@@ -145,8 +145,9 @@
 
     @media (min-width: 768px) {
       .slide { padding-left: 48px; padding-right: 48px; }
+      .slide--intro,
       .slide--projects,
-      .slide--contact { max-width: 1100px; margin: 0 auto; }
+      .slide--contact { max-width: 1280px; margin: 0 auto; }
     }
 
     .slide--intro,
@@ -165,10 +166,8 @@
     .slide--intro {
       background: transparent;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
+      justify-content: center;
     }
     .slide--projects {
       background: transparent;
@@ -187,27 +186,81 @@
       color: transparent;
     }
 
-    /* ── Page 1: Intro ── */
-    .avatar-wrap {
-      position: relative;
-      margin-bottom: 28px;
+    /* ── Page 1: Intro split layout ── */
+    .intro-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      width: 100%;
+      align-items: center;
     }
-    .avatar-wrap::before {
+    @media (min-width: 900px) {
+      .intro-layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+      }
+      .intro-photo {
+        margin: 0 0 0 auto;
+        max-width: 100%;
+      }
+    }
+    .intro-content {
+      text-align: left;
+    }
+    .intro-photo {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(13, 15, 22, 0.72);
+      box-shadow: var(--shadow), var(--shadow-glow);
+    }
+    .intro-photo::before {
       content: '';
       position: absolute;
-      inset: -4px;
-      border-radius: 50%;
+      inset: 0;
+      border-radius: inherit;
+      padding: 2px;
       background: var(--gradient);
-      opacity: 0.85;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 1;
     }
-    .avatar {
-      position: relative;
-      width: 128px;
-      height: 128px;
-      border-radius: 50%;
+    .intro-photo img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      border: 3px solid var(--bg);
-      box-shadow: var(--shadow-glow);
+      display: block;
+    }
+    .intro-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+    }
+    .intro-photo-placeholder strong {
+      color: var(--text);
+      font-size: 15px;
+    }
+    .intro-photo-placeholder code {
+      font-size: 12px;
+      color: #c4b5fd;
     }
     .intro-name {
       font-size: clamp(2.25rem, 9vw, 3.5rem);
@@ -240,7 +293,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
     }
     .tag {
@@ -260,7 +313,46 @@
       background: var(--surface-hover);
     }
 
-    /* ── Page 2: Projects + About ── */
+    /* ── Page 2: Projects + About split ── */
+    .projects-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      width: 100%;
+    }
+    @media (min-width: 900px) {
+      .slide--projects {
+        display: flex;
+        align-items: center;
+        min-height: 100dvh;
+        padding-top: 88px;
+        padding-bottom: 48px;
+      }
+      .projects-layout {
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+        gap: 36px;
+        align-items: start;
+      }
+      .about-sidebar {
+        position: sticky;
+        top: 88px;
+      }
+      .projects-main .section-title {
+        margin-bottom: 20px;
+      }
+      .projects-main .projects-grid {
+        margin-bottom: 0;
+      }
+      .projects-main .project-body {
+        padding: 14px 16px 16px;
+      }
+      .projects-main .project-title { font-size: 1rem; margin-bottom: 6px; }
+      .projects-main .project-desc { font-size: 13px; margin-bottom: 10px; }
+      .projects-main .project-card--tall .project-screenshot { aspect-ratio: 4 / 5; }
+      .projects-main .project-card--wide .project-screenshot { aspect-ratio: 16 / 9; }
+      .projects-main .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
+    }
+
     .section-label {
       display: inline-block;
       font-size: 11px;
@@ -296,17 +388,10 @@
       gap: 16px;
       min-width: 0;
     }
-    .projects-column--side { display: none; }
-    @media (max-width: 639px) {
+    @media (max-width: 899px) {
       .projects-grid {
         flex-direction: column;
       }
-      .projects-column--side {
-        display: flex;
-      }
-    }
-    @media (min-width: 640px) {
-      .projects-column--side { display: flex; }
     }
     .project-card {
       width: 100%;
@@ -474,125 +559,138 @@
 
     <!-- ═══ PAGE 1: INTRO ═══ -->
     <section class="slide slide--intro" aria-label="Introduction">
-      <!-- Replace with your photo: src="images/avatar.jpg" -->
-      <div class="avatar-wrap">
-        <img
-          class="avatar"
-          src="https://api.dicebear.com/7.x/notionists/svg?seed=You"
-          alt="Your Name"
-        />
-      </div>
-      <h1 class="intro-name">Your Name</h1>
-      <p class="intro-role gradient-text">Product Designer & Developer</p>
-      <p class="intro-tagline">
-        I craft thoughtful digital experiences — from concept to shipped product.
-        Based in San Francisco, open to remote work.
-      </p>
-      <p class="intro-tags-label">Tools Used:</p>
-      <div class="intro-tags">
-        <span class="tag">UI/UX</span>
-        <span class="tag">React</span>
-        <span class="tag">Figma</span>
-        <span class="tag">Canva</span>
+      <div class="intro-layout">
+        <div class="intro-content">
+          <h1 class="intro-name">Your Name</h1>
+          <p class="intro-role gradient-text">Product Designer & Developer</p>
+          <p class="intro-tagline">
+            I craft thoughtful digital experiences — from concept to shipped product.
+            Based in San Francisco, open to remote work.
+          </p>
+          <p class="intro-tags-label">Tools Used:</p>
+          <div class="intro-tags">
+            <span class="tag">UI/UX</span>
+            <span class="tag">React</span>
+            <span class="tag">Figma</span>
+            <span class="tag">Canva</span>
+          </div>
+        </div>
+
+        <!-- Replace src with your photo: images/your-photo.jpg -->
+        <div class="intro-photo">
+          <img
+            src="images/your-photo.jpg"
+            alt="Your Name"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="intro-photo-placeholder" style="display: none;">
+            <strong>Add your photo</strong>
+            <span>Save your image as<br/><code>images/your-photo.jpg</code></span>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ═══ PAGE 2: PROJECTS + ABOUT ═══ -->
     <section class="slide slide--projects" aria-label="Projects and About">
-      <p class="section-label">Selected Work</p>
-      <h2 class="section-title">Projects</h2>
+      <div class="projects-layout">
+        <div class="projects-main">
+          <p class="section-label">Selected Work</p>
+          <h2 class="section-title">Projects</h2>
 
-      <div class="projects-grid">
-        <div class="projects-column">
-          <article class="project-card project-card--tall">
-            <img
-              class="project-screenshot"
-              src="images/project-1.png"
-              alt="Project One screenshot"
-              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
-            />
-            <div class="project-body">
-              <h3 class="project-title">Project One</h3>
-              <p class="project-desc">
-                A brief one-liner about what you built and the impact it had.
-              </p>
-              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+          <div class="projects-grid">
+            <div class="projects-column">
+              <article class="project-card project-card--tall">
+                <img
+                  class="project-screenshot"
+                  src="images/project-1.png"
+                  alt="Project One screenshot"
+                  onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
+                />
+                <div class="project-body">
+                  <h3 class="project-title">Project One</h3>
+                  <p class="project-desc">
+                    A brief one-liner about what you built and the impact it had.
+                  </p>
+                  <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                </div>
+              </article>
+
+              <article class="project-card project-card--square">
+                <img
+                  class="project-screenshot"
+                  src="images/project-3.png"
+                  alt="Project Three screenshot"
+                  onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
+                />
+                <div class="project-body">
+                  <h3 class="project-title">Project Three</h3>
+                  <p class="project-desc">
+                    Optional third project — remove this card if you only need two.
+                  </p>
+                  <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                </div>
+              </article>
             </div>
-          </article>
+
+            <div class="projects-column">
+              <article class="project-card project-card--wide">
+                <img
+                  class="project-screenshot"
+                  src="images/project-2.png"
+                  alt="Project Two screenshot"
+                  onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
+                />
+                <div class="project-body">
+                  <h3 class="project-title">Project Two</h3>
+                  <p class="project-desc">
+                    Another project summary — tech stack, role, or outcome.
+                  </p>
+                  <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                </div>
+              </article>
+
+              <article class="project-card project-card--wide">
+                <img
+                  class="project-screenshot"
+                  src="images/project-4.png"
+                  alt="Project Four screenshot"
+                  onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-4.png</div>'"
+                />
+                <div class="project-body">
+                  <h3 class="project-title">Project Four</h3>
+                  <p class="project-desc">
+                    A fourth project with the same wide layout as Project Two.
+                  </p>
+                  <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                </div>
+              </article>
+            </div>
+          </div>
         </div>
 
-        <div class="projects-column">
-          <article class="project-card project-card--wide">
-            <img
-              class="project-screenshot"
-              src="images/project-2.png"
-              alt="Project Two screenshot"
-              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
-            />
-            <div class="project-body">
-              <h3 class="project-title">Project Two</h3>
-              <p class="project-desc">
-                Another project summary — tech stack, role, or outcome.
-              </p>
-              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+        <aside class="about-sidebar">
+          <p class="section-label">About Me</p>
+          <h2 class="section-title">More about me</h2>
+          <div class="about-block">
+            <p>
+              I'm a designer-developer hybrid with 5+ years building products for
+              startups and agencies. I care about accessibility, performance, and
+              details that make interfaces feel effortless.
+            </p>
+            <p>
+              When I'm not designing, you'll find me hiking, reading sci-fi, or
+              contributing to open source.
+            </p>
+            <div class="skills-row">
+              <span class="tag">JavaScript</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">Next.js</span>
+              <span class="tag">Tailwind</span>
+              <span class="tag">Node.js</span>
             </div>
-          </article>
-
-          <article class="project-card project-card--wide">
-            <img
-              class="project-screenshot"
-              src="images/project-4.png"
-              alt="Project Four screenshot"
-              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-4.png</div>'"
-            />
-            <div class="project-body">
-              <h3 class="project-title">Project Four</h3>
-              <p class="project-desc">
-                A fourth project with the same wide layout as Project Two.
-              </p>
-              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-            </div>
-          </article>
-        </div>
-
-        <div class="projects-column projects-column--side">
-          <article class="project-card project-card--square">
-            <img
-              class="project-screenshot"
-              src="images/project-3.png"
-              alt="Project Three screenshot"
-              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
-            />
-            <div class="project-body">
-              <h3 class="project-title">Project Three</h3>
-              <p class="project-desc">
-                Optional third project — remove this card if you only need two.
-              </p>
-              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-            </div>
-          </article>
-        </div>
-      </div>
-
-      <p class="section-label">About Me</p>
-      <h2 class="section-title">More about me</h2>
-      <div class="about-block">
-        <p>
-          I'm a designer-developer hybrid with 5+ years building products for
-          startups and agencies. I care about accessibility, performance, and
-          details that make interfaces feel effortless.
-        </p>
-        <p>
-          When I'm not designing, you'll find me hiking, reading sci-fi, or
-          contributing to open source.
-        </p>
-        <div class="skills-row">
-          <span class="tag">JavaScript</span>
-          <span class="tag">TypeScript</span>
-          <span class="tag">Next.js</span>
-          <span class="tag">Tailwind</span>
-          <span class="tag">Node.js</span>
-        </div>
+          </div>
+        </aside>
       </div>
     </section>
 
