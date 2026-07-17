@@ -500,7 +500,7 @@
 
     function goTo(index) {
       current = Math.max(0, Math.min(TOTAL - 1, index));
-      stories.style.transform = `translateY(-${current * 100}dvh)`;
+      stories.style.transform = `translateY(-${current * 100}vh)`;
 
       segments.forEach((seg, i) => {
         seg.classList.remove('active', 'done');
@@ -519,21 +519,36 @@
       return stories.children[current];
     }
 
+    function isSlideScrollable(slide) {
+      return slide && slide.scrollHeight > slide.clientHeight + 8;
+    }
+
+    function isAtSlideTop(slide) {
+      return !slide || slide.scrollTop <= 32;
+    }
+
+    function isAtSlideBottom(slide) {
+      if (!slide) return true;
+      const remaining = slide.scrollHeight - slide.clientHeight - slide.scrollTop;
+      return remaining <= 32;
+    }
+
     function canNavigate(dir) {
       const slide = getActiveSlide();
-      if (!slide || slide.scrollHeight <= slide.clientHeight + 1) return true;
-      const atTop = slide.scrollTop <= 0;
-      const atBottom = slide.scrollTop + slide.clientHeight >= slide.scrollHeight - 1;
-      return dir > 0 ? atBottom : atTop;
+      if (!isSlideScrollable(slide)) return true;
+      return dir > 0 ? isAtSlideBottom(slide) : isAtSlideTop(slide);
     }
 
     // Swipe detection
     let startX = 0, startY = 0, dragging = false;
+    let touchStartedOnSlide = false;
 
     document.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       dragging = true;
+      const slide = getActiveSlide();
+      touchStartedOnSlide = slide && slide.contains(e.target);
     }, { passive: true });
 
     document.addEventListener('touchend', e => {
@@ -541,38 +556,55 @@
       dragging = false;
       const dx = e.changedTouches[0].clientX - startX;
       const dy = e.changedTouches[0].clientY - startY;
-      // Only vertical swipes (ignore horizontal intent)
-      if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx)) {
-        if (dy < 0 && canNavigate(1)) next();
-        else if (dy > 0 && canNavigate(-1)) prev();
+      if (Math.abs(dy) <= 50 || Math.abs(dy) <= Math.abs(dx)) return;
+
+      const slide = getActiveSlide();
+      if (touchStartedOnSlide && isSlideScrollable(slide)) {
+        if (dy < 0 && !isAtSlideBottom(slide)) return;
+        if (dy > 0 && !isAtSlideTop(slide)) return;
       }
+
+      if (dy < 0) next();
+      else prev();
     }, { passive: true });
 
     // Mouse wheel (desktop)
     let wheelLock = false;
     document.addEventListener('wheel', e => {
       if (wheelLock) return;
-      if (Math.abs(e.deltaY) < 30) return;
+      if (Math.abs(e.deltaY) < 20) return;
+
       const dir = e.deltaY > 0 ? 1 : -1;
-      if (!canNavigate(dir)) return;
+      const slide = getActiveSlide();
+
+      if (isSlideScrollable(slide)) {
+        if (dir > 0 && !isAtSlideBottom(slide)) return;
+        if (dir < 0 && !isAtSlideTop(slide)) return;
+      }
+
       e.preventDefault();
       wheelLock = true;
       dir > 0 ? next() : prev();
-      setTimeout(() => { wheelLock = false; }, 500);
+      setTimeout(() => { wheelLock = false; }, 450);
     }, { passive: false });
 
     // Tap zones
     document.querySelectorAll('[data-dir]').forEach(el => {
       el.addEventListener('click', () => {
         const dir = parseInt(el.dataset.dir);
-        dir > 0 ? next() : prev();
+        if (dir > 0) next();
+        else prev();
       });
     });
 
     // Keyboard
     document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prev();
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        if (canNavigate(1)) next();
+      }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        if (canNavigate(-1)) prev();
+      }
     });
 
     goTo(0);
