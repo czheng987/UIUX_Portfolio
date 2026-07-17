@@ -64,7 +64,6 @@
 
     .progress,
     .swipe-hint,
-    .tap-zone,
     .stories {
       position: relative;
       z-index: 1;
@@ -78,11 +77,6 @@
     .swipe-hint {
       position: fixed;
       z-index: 50;
-    }
-
-    .tap-zone {
-      position: fixed;
-      z-index: 90;
     }
 
     /* ── Progress bars (story style) ── */
@@ -349,10 +343,13 @@
       .projects-main .project-title { font-size: 1rem; margin-bottom: 6px; }
       .projects-main .project-desc { font-size: 13px; margin-bottom: 10px; }
       .projects-main .projects-column { gap: 12px; }
-      .projects-main .project-card--tall .project-screenshot,
+      .projects-main .project-card--tall .project-screenshot {
+        aspect-ratio: 3 / 4;
+        max-height: 190px;
+      }
       .projects-main .project-card--square .project-screenshot {
-        aspect-ratio: 16 / 10;
-        max-height: 118px;
+        aspect-ratio: 1 / 1;
+        max-height: 165px;
       }
       .projects-main .project-card--wide .project-screenshot { aspect-ratio: 16 / 9; }
     }
@@ -517,6 +514,9 @@
       padding: 24px;
       backdrop-filter: blur(16px);
       box-shadow: var(--shadow-glow);
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
     }
     .form-field {
       display: flex;
@@ -540,6 +540,9 @@
       color: var(--text);
       font-family: inherit;
       font-size: 15px;
+      pointer-events: auto;
+      -webkit-user-select: text;
+      user-select: text;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .form-field input:focus,
@@ -549,8 +552,13 @@
       box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
     }
     .form-field textarea {
-      min-height: 120px;
+      min-height: 140px;
       resize: vertical;
+      line-height: 1.6;
+    }
+    .form-field textarea::placeholder,
+    .form-field input::placeholder {
+      color: rgba(148, 163, 184, 0.75);
     }
     .form-submit {
       margin-top: 4px;
@@ -616,16 +624,6 @@
     }
     .contact-btn .label { font-size: 13px; font-weight: 700; }
     .contact-btn .sub { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
-
-    /* Tap zones for desktop */
-    .tap-zone {
-      left: 0;
-      right: 0;
-      height: 30%;
-      cursor: pointer;
-    }
-    .tap-zone--top { top: 60px; }
-    .tap-zone--bottom { bottom: 80px; }
   </style>
 </head>
 <body>
@@ -638,10 +636,6 @@
   </div>
 
   <p class="swipe-hint" id="swipeHint">Scroll down ↓</p>
-
-  <!-- Tap zones (desktop) -->
-  <div class="tap-zone tap-zone--top"    data-dir="-1" aria-label="Previous"></div>
-  <div class="tap-zone tap-zone--bottom" data-dir="1"  aria-label="Next"></div>
 
   <div class="stories" id="stories">
 
@@ -909,16 +903,9 @@
       });
     }, { passive: true });
 
-    // Tap zones
-    document.querySelectorAll('[data-dir]').forEach(el => {
-      el.addEventListener('click', () => {
-        const dir = parseInt(el.dataset.dir);
-        scrollToSlide(current + dir);
-      });
-    });
-
-    // Keyboard
+    // Keyboard — skip when typing in form fields
     document.addEventListener('keydown', e => {
+      if (e.target.closest('input, textarea, select, button')) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         e.preventDefault();
         scrollToSlide(current + 1);
