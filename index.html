@@ -319,9 +319,44 @@
         gap: 36px;
         align-items: start;
       }
-      .about-sidebar {
+      .projects-sidebar-area {
         position: sticky;
         top: 88px;
+        align-self: start;
+        min-height: min(85dvh, 920px);
+      }
+      .about-sidebar {
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+      }
+      .projects-layout.has-preview .about-sidebar {
+        display: none;
+      }
+      .project-hover-preview {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        display: block;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: var(--radius);
+        box-shadow: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .project-hover-preview.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+      .project-hover-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
       }
       .projects-main .section-title {
         margin-bottom: 16px;
@@ -411,27 +446,13 @@
       object-fit: cover;
       object-position: center;
       display: block;
-      transform: translateZ(0);
-      backface-visibility: hidden;
     }
-    @media (hover: hover) {
-      .project-visual::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: rgba(13, 15, 22, 0.88);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-        z-index: 1;
-      }
-      .project-card:hover .project-visual::after,
-      .project-card:focus-within .project-visual::after {
-        opacity: 1;
-      }
-      .project-card:hover .project-screenshot,
-      .project-card:focus-within .project-screenshot {
-        object-fit: contain;
+    .projects-sidebar-area {
+      position: relative;
+    }
+    @media (max-width: 899px) {
+      .project-hover-preview {
+        display: none;
       }
     }
     .project-screenshot.placeholder {
@@ -689,11 +710,12 @@
             <div class="projects-section projects-section--arts">
               <h2 class="section-title">Arts & Graphic Design</h2>
               <div class="projects-stack">
-                <article class="project-card project-card--tall">
+                <article class="project-card project-card--tall" tabindex="0">
                   <div class="project-visual">
                     <img
                       class="project-screenshot"
                       src="images/project-1.png"
+                      data-full-src="images/project-1.png"
                       alt="Graphic design project one"
                       onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
                     />
@@ -706,11 +728,12 @@
                   </div>
                 </article>
 
-                <article class="project-card project-card--square">
+                <article class="project-card project-card--square" tabindex="0">
                   <div class="project-visual">
                     <img
                       class="project-screenshot"
                       src="images/project-3.png"
+                      data-full-src="images/project-3.png"
                       alt="Graphic design project three"
                       onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
                     />
@@ -729,11 +752,12 @@
             <div class="projects-section projects-section--apps">
               <h2 class="section-title">App Prototypes</h2>
               <div class="projects-stack">
-                <article class="project-card project-card--wide">
+                <article class="project-card project-card--wide" tabindex="0">
                   <div class="project-visual">
                     <img
                       class="project-screenshot"
                       src="images/GiftApp.png"
+                      data-full-src="images/GiftApp.png"
                       alt="App prototype two"
                       onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
                     />
@@ -746,11 +770,12 @@
                   </div>
                 </article>
 
-                <article class="project-card project-card--wide">
+                <article class="project-card project-card--wide" tabindex="0">
                   <div class="project-visual">
                     <img
                       class="project-screenshot"
                       src="images/PetApp.png"
+                      data-full-src="images/PetApp.png"
                       alt="App prototype four"
                       onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-4.png</div>'"
                     />
@@ -763,11 +788,12 @@
                   </div>
                 </article>
 
-                <article class="project-card project-card--wide">
+                <article class="project-card project-card--wide" tabindex="0">
                   <div class="project-visual">
                     <img
                       class="project-screenshot"
                       src="images/TrackerApp.png"
+                      data-full-src="images/TrackerApp.png"
                       alt="App prototype five"
                       onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-5.png</div>'"
                     />
@@ -784,28 +810,34 @@
           </div>
         </div>
 
-        <aside class="about-sidebar">
-          <p class="section-label">About Me</p>
-          <h2 class="section-title">More about me</h2>
-          <div class="about-block">
-            <p>
-              I'm a designer-developer hybrid with 5+ years building products for
-              startups and agencies. I care about accessibility, performance, and
-              details that make interfaces feel effortless.
-            </p>
-            <p>
-              When I'm not designing, you'll find me hiking, reading sci-fi, or
-              contributing to open source.
-            </p>
-            <div class="skills-row">
-              <span class="tag">JavaScript</span>
-              <span class="tag">TypeScript</span>
-              <span class="tag">Next.js</span>
-              <span class="tag">Tailwind</span>
-              <span class="tag">Node.js</span>
+        <div class="projects-sidebar-area">
+          <aside class="about-sidebar">
+            <p class="section-label">About Me</p>
+            <h2 class="section-title">More about me</h2>
+            <div class="about-block">
+              <p>
+                I'm a designer-developer hybrid with 5+ years building products for
+                startups and agencies. I care about accessibility, performance, and
+                details that make interfaces feel effortless.
+              </p>
+              <p>
+                When I'm not designing, you'll find me hiking, reading sci-fi, or
+                contributing to open source.
+              </p>
+              <div class="skills-row">
+                <span class="tag">JavaScript</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">Next.js</span>
+                <span class="tag">Tailwind</span>
+                <span class="tag">Node.js</span>
+              </div>
             </div>
+          </aside>
+
+          <div class="project-hover-preview" id="projectHoverPreview" aria-hidden="true">
+            <img src="" alt="" />
           </div>
-        </aside>
+        </div>
       </div>
     </section>
 
@@ -934,6 +966,43 @@
     });
 
     updateProgress(0);
+
+    // Project hover preview — full image on right over About Me
+    const projectsLayout = document.querySelector('.projects-layout');
+    const projectPreview = document.getElementById('projectHoverPreview');
+    const projectPreviewImg = projectPreview?.querySelector('img');
+
+    function showProjectPreview(card) {
+      const img = card.querySelector('img.project-screenshot');
+      if (!img || img.tagName !== 'IMG' || !projectPreview || !projectPreviewImg) return;
+
+      const fullSrc = img.dataset.fullSrc || img.currentSrc || img.src;
+      if (!fullSrc) return;
+
+      projectPreviewImg.src = fullSrc;
+      projectPreviewImg.alt = img.alt || '';
+      projectPreviewImg.removeAttribute('width');
+      projectPreviewImg.removeAttribute('height');
+      projectPreview.classList.add('is-visible');
+      projectPreview.setAttribute('aria-hidden', 'false');
+      projectsLayout?.classList.add('has-preview');
+    }
+
+    function hideProjectPreview() {
+      if (!projectPreview) return;
+      projectPreview.classList.remove('is-visible');
+      projectPreview.setAttribute('aria-hidden', 'true');
+      projectsLayout?.classList.remove('has-preview');
+    }
+
+    document.querySelectorAll('.project-card').forEach(card => {
+      card.addEventListener('mouseenter', () => showProjectPreview(card));
+      card.addEventListener('mouseleave', hideProjectPreview);
+      card.addEventListener('focusin', () => showProjectPreview(card));
+      card.addEventListener('focusout', e => {
+        if (!card.contains(e.relatedTarget)) hideProjectPreview();
+      });
+    });
   </script>
 </body>
 </html>
