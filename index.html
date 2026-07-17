@@ -228,11 +228,20 @@
       font-size: 1.05rem;
       margin-bottom: 36px;
     }
+    .intro-tags-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
     .intro-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       justify-content: center;
+      align-items: center;
     }
     .tag {
       padding: 8px 16px;
@@ -275,27 +284,40 @@
 
     /* Project cards — Pinterest-style masonry */
     .projects-grid {
-      columns: 2;
-      column-gap: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
       margin-bottom: 48px;
     }
+    .projects-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+    .projects-column--side { display: none; }
+    @media (max-width: 639px) {
+      .projects-grid {
+        flex-direction: column;
+      }
+      .projects-column--side {
+        display: flex;
+      }
+    }
     @media (min-width: 640px) {
-      .projects-grid { columns: 3; }
+      .projects-column--side { display: flex; }
     }
     .project-card {
-      break-inside: avoid;
-      margin-bottom: 16px;
-      display: inline-block;
       width: 100%;
       background: rgba(13, 15, 22, 0.72);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
       backdrop-filter: blur(16px);
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .project-card:hover {
-      transform: translateY(-4px) scale(1.01);
       border-color: rgba(139, 92, 246, 0.45);
       box-shadow: var(--shadow), var(--shadow-glow);
     }
@@ -466,11 +488,12 @@
         I craft thoughtful digital experiences — from concept to shipped product.
         Based in San Francisco, open to remote work.
       </p>
+      <p class="intro-tags-label">Tools Used:</p>
       <div class="intro-tags">
         <span class="tag">UI/UX</span>
         <span class="tag">React</span>
         <span class="tag">Figma</span>
-        <span class="tag">Design Systems</span>
+        <span class="tag">Canva</span>
       </div>
     </section>
 
@@ -480,56 +503,75 @@
       <h2 class="section-title">Projects</h2>
 
       <div class="projects-grid">
-        <article class="project-card project-card--tall">
-          <img
-            class="project-screenshot"
-            src="images/project-1.png"
-            alt="Project One screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project One</h3>
-            <p class="project-desc">
-              A brief one-liner about what you built and the impact it had.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-          </div>
-        </article>
+        <div class="projects-column">
+          <article class="project-card project-card--tall">
+            <img
+              class="project-screenshot"
+              src="images/project-1.png"
+              alt="Project One screenshot"
+              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
+            />
+            <div class="project-body">
+              <h3 class="project-title">Project One</h3>
+              <p class="project-desc">
+                A brief one-liner about what you built and the impact it had.
+              </p>
+              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+            </div>
+          </article>
+        </div>
 
-        <!-- PROJECT 2 -->
-        <article class="project-card project-card--wide">
-          <img
-            class="project-screenshot"
-            src="images/project-2.png"
-            alt="Project Two screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project Two</h3>
-            <p class="project-desc">
-              Another project summary — tech stack, role, or outcome.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-          </div>
-        </article>
+        <div class="projects-column">
+          <article class="project-card project-card--wide">
+            <img
+              class="project-screenshot"
+              src="images/project-2.png"
+              alt="Project Two screenshot"
+              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
+            />
+            <div class="project-body">
+              <h3 class="project-title">Project Two</h3>
+              <p class="project-desc">
+                Another project summary — tech stack, role, or outcome.
+              </p>
+              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+            </div>
+          </article>
 
-        <!-- PROJECT 3 (duplicate block to add more) -->
-        <article class="project-card project-card--square">
-          <img
-            class="project-screenshot"
-            src="images/project-3.png"
-            alt="Project Three screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project Three</h3>
-            <p class="project-desc">
-              Optional third project — remove this card if you only need two.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-          </div>
-        </article>
+          <article class="project-card project-card--wide">
+            <img
+              class="project-screenshot"
+              src="images/project-4.png"
+              alt="Project Four screenshot"
+              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-4.png</div>'"
+            />
+            <div class="project-body">
+              <h3 class="project-title">Project Four</h3>
+              <p class="project-desc">
+                A fourth project with the same wide layout as Project Two.
+              </p>
+              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+            </div>
+          </article>
+        </div>
 
+        <div class="projects-column projects-column--side">
+          <article class="project-card project-card--square">
+            <img
+              class="project-screenshot"
+              src="images/project-3.png"
+              alt="Project Three screenshot"
+              onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
+            />
+            <div class="project-body">
+              <h3 class="project-title">Project Three</h3>
+              <p class="project-desc">
+                Optional third project — remove this card if you only need two.
+              </p>
+              <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+            </div>
+          </article>
+        </div>
       </div>
 
       <p class="section-label">About Me</p>
