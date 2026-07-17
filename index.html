@@ -681,6 +681,10 @@
     .form-submit:active {
       transform: scale(0.98);
     }
+    .contact-sidebar {
+      position: relative;
+      z-index: 3;
+    }
     .contact-sidebar-title {
       font-size: 14px;
       font-weight: 700;
@@ -705,6 +709,9 @@
       font-weight: 600;
       box-shadow: var(--shadow-sm);
       transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 3;
+      cursor: pointer;
     }
     .contact-btn:hover {
       transform: translateY(-2px);
@@ -726,8 +733,18 @@
       font-size: 18px;
       flex-shrink: 0;
     }
-    .contact-btn .label { font-size: 14px; font-weight: 700; }
-    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+    .contact-btn .label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .contact-btn .sub {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -976,18 +993,23 @@
         <div class="contact-sidebar">
           <p class="contact-sidebar-title">Or reach me directly</p>
           <div class="contact-links">
-            <a class="contact-btn" href="mailto:czheng987@gmail.com">
+            <a
+              class="contact-btn"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=czheng987@gmail.com&su=Portfolio%20Inquiry"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <span class="icon">✉️</span>
-              <span>
-                <div class="label">Email</div>
-                <div class="sub">czheng987@gmail.com</div>
+              <span class="contact-btn-text">
+                <span class="label">Email</span>
+                <span class="sub">czheng987@gmail.com</span>
               </span>
             </a>
-            <a class="contact-btn" href="https://www.linkedin.com/in/chels-zheng-a91b02382/" target="_blank" rel="noopener">
+            <a class="contact-btn" href="https://www.linkedin.com/in/chels-zheng-a91b02382/" target="_blank" rel="noopener noreferrer">
               <span class="icon">💼</span>
-              <span>
-                <div class="label">LinkedIn</div>
-                <div class="sub">https://www.linkedin.com/in/chels-zheng-a91b02382/</div>
+              <span class="contact-btn-text">
+                <span class="label">LinkedIn</span>
+                <span class="sub">linkedin.com/in/chels-zheng-a91b02382</span>
               </span>
             </a>
             <!-- <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
