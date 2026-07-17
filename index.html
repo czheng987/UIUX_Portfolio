@@ -19,13 +19,23 @@
       --radius: 16px;
     }
 
-    html, body {
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      overflow-y: scroll;
       height: 100%;
-      overflow: hidden;
+    }
+
+    html, body {
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      overflow: visible;
+      min-height: 100%;
     }
 
     /* ── Progress bars (story style) ── */
@@ -76,25 +86,25 @@
 
     /* ── Story container ── */
     .stories {
-      display: flex;
-      flex-direction: column;
-      width: 100vw;
-      height: 300vh;
-      height: 300dvh;
-      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform;
+      width: 100%;
     }
-    .stories.no-transition { transition: none; }
 
     .slide {
       width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      flex-shrink: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 72px 24px calc(env(safe-area-inset-bottom, 16px) + 100px);
+      scroll-snap-align: start;
+      padding: 72px 24px calc(env(safe-area-inset-bottom, 16px) + 48px);
+    }
+
+    .slide--intro,
+    .slide--contact {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-snap-stop: always;
+    }
+
+    .slide--projects {
+      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     /* ── Slide backgrounds ── */
@@ -336,7 +346,7 @@
     <div class="progress-segment"><div class="progress-fill"></div></div>
   </div>
 
-  <p class="swipe-hint" id="swipeHint">Swipe down ↓</p>
+  <p class="swipe-hint" id="swipeHint">Scroll down ↓</p>
 
   <!-- Tap zones (desktop) -->
   <div class="tap-zone tap-zone--top"    data-dir="-1" aria-label="Previous"></div>
@@ -494,120 +504,67 @@
     const TOTAL = 3;
     let current = 0;
 
-    const stories   = document.getElementById('stories');
+    const slides    = document.querySelectorAll('.slide');
     const segments  = document.querySelectorAll('.progress-segment');
     const swipeHint = document.getElementById('swipeHint');
 
-    function goTo(index) {
+    function updateProgress(index) {
       current = Math.max(0, Math.min(TOTAL - 1, index));
-      stories.style.transform = `translateY(-${current * 100}vh)`;
-
       segments.forEach((seg, i) => {
         seg.classList.remove('active', 'done');
         if (i < current) seg.classList.add('done');
         if (i === current) seg.classList.add('active');
       });
-
       if (current > 0) swipeHint.classList.add('hidden');
       if (current === TOTAL - 1) swipeHint.textContent = '';
     }
 
-    function next() { goTo(current + 1); }
-    function prev() { goTo(current - 1); }
-
-    function getActiveSlide() {
-      return stories.children[current];
+    function scrollToSlide(index) {
+      const target = Math.max(0, Math.min(TOTAL - 1, index));
+      slides[target].scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function isSlideScrollable(slide) {
-      return slide && slide.scrollHeight > slide.clientHeight + 8;
+    function getActiveSlideIndex() {
+      const midpoint = window.innerHeight * 0.35;
+      let active = 0;
+      slides.forEach((slide, i) => {
+        const { top, bottom } = slide.getBoundingClientRect();
+        if (top <= midpoint && bottom > midpoint) active = i;
+      });
+      return active;
     }
 
-    function isAtSlideTop(slide) {
-      return !slide || slide.scrollTop <= 32;
-    }
-
-    function isAtSlideBottom(slide) {
-      if (!slide) return true;
-      const remaining = slide.scrollHeight - slide.clientHeight - slide.scrollTop;
-      return remaining <= 32;
-    }
-
-    function canNavigate(dir) {
-      const slide = getActiveSlide();
-      if (!isSlideScrollable(slide)) return true;
-      return dir > 0 ? isAtSlideBottom(slide) : isAtSlideTop(slide);
-    }
-
-    // Swipe detection
-    let startX = 0, startY = 0, dragging = false;
-    let touchStartedOnSlide = false;
-
-    document.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      dragging = true;
-      const slide = getActiveSlide();
-      touchStartedOnSlide = slide && slide.contains(e.target);
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        updateProgress(getActiveSlideIndex());
+        scrollTicking = false;
+      });
     }, { passive: true });
-
-    document.addEventListener('touchend', e => {
-      if (!dragging) return;
-      dragging = false;
-      const dx = e.changedTouches[0].clientX - startX;
-      const dy = e.changedTouches[0].clientY - startY;
-      if (Math.abs(dy) <= 50 || Math.abs(dy) <= Math.abs(dx)) return;
-
-      const slide = getActiveSlide();
-      if (touchStartedOnSlide && isSlideScrollable(slide)) {
-        if (dy < 0 && !isAtSlideBottom(slide)) return;
-        if (dy > 0 && !isAtSlideTop(slide)) return;
-      }
-
-      if (dy < 0) next();
-      else prev();
-    }, { passive: true });
-
-    // Mouse wheel (desktop)
-    let wheelLock = false;
-    document.addEventListener('wheel', e => {
-      if (wheelLock) return;
-      if (Math.abs(e.deltaY) < 20) return;
-
-      const dir = e.deltaY > 0 ? 1 : -1;
-      const slide = getActiveSlide();
-
-      if (isSlideScrollable(slide)) {
-        if (dir > 0 && !isAtSlideBottom(slide)) return;
-        if (dir < 0 && !isAtSlideTop(slide)) return;
-      }
-
-      e.preventDefault();
-      wheelLock = true;
-      dir > 0 ? next() : prev();
-      setTimeout(() => { wheelLock = false; }, 450);
-    }, { passive: false });
 
     // Tap zones
     document.querySelectorAll('[data-dir]').forEach(el => {
       el.addEventListener('click', () => {
         const dir = parseInt(el.dataset.dir);
-        if (dir > 0) next();
-        else prev();
+        scrollToSlide(current + dir);
       });
     });
 
     // Keyboard
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        if (canNavigate(1)) next();
+        e.preventDefault();
+        scrollToSlide(current + 1);
       }
       if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        if (canNavigate(-1)) prev();
+        e.preventDefault();
+        scrollToSlide(current - 1);
       }
     });
 
-    goTo(0);
+    updateProgress(0);
   </script>
 </body>
 </html>
