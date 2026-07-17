@@ -5,18 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Your Name — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0a0f;
-      --surface: rgba(255,255,255,0.06);
-      --text: #f5f5f7;
-      --muted: rgba(245,245,247,0.65);
-      --accent: #6366f1;
-      --accent-soft: rgba(99,102,241,0.25);
-      --radius: 16px;
+      --bg: #06070b;
+      --bg-elevated: #0d0f16;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --accent-2: #06b6d4;
+      --accent-3: #f472b6;
+      --accent-soft: rgba(139, 92, 246, 0.18);
+      --gradient: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #f472b6 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(139,92,246,0.35), rgba(6,182,212,0.2));
+      --radius: 20px;
+      --radius-sm: 12px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.15);
     }
 
     html {
@@ -27,7 +38,7 @@
     }
 
     html, body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
@@ -36,45 +47,82 @@
     body {
       overflow: visible;
       min-height: 100%;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 10%, rgba(139, 92, 246, 0.22), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 85% 20%, rgba(6, 182, 212, 0.16), transparent 50%),
+        radial-gradient(ellipse 55% 40% at 50% 90%, rgba(244, 114, 182, 0.12), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .progress,
+    .swipe-hint,
+    .tap-zone,
+    .stories {
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      z-index: 100;
+    }
+
+    .swipe-hint {
+      position: fixed;
+      z-index: 50;
+    }
+
+    .tap-zone {
+      position: fixed;
+      z-index: 90;
     }
 
     /* ── Progress bars (story style) ── */
     .progress {
-      position: fixed;
       top: env(safe-area-inset-top, 12px);
-      left: 16px;
-      right: 16px;
-      z-index: 100;
+      left: 20px;
+      right: 20px;
       display: flex;
-      gap: 6px;
-      padding-top: 8px;
+      gap: 8px;
+      padding-top: 10px;
     }
     .progress-segment {
       flex: 1;
-      height: 3px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
       overflow: hidden;
+      backdrop-filter: blur(8px);
     }
     .progress-fill {
       height: 100%;
       width: 0%;
-      background: #fff;
-      border-radius: 2px;
+      background: var(--gradient);
+      border-radius: 999px;
       transition: width 0.35s ease;
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
     }
     .progress-segment.done .progress-fill { width: 100%; }
     .progress-segment.active .progress-fill { width: 100%; }
 
     /* ── Swipe hint ── */
     .swipe-hint {
-      position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 16px) + 72px);
       left: 50%;
       transform: translateX(-50%);
       font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       color: var(--muted);
-      z-index: 50;
       animation: pulse 2s ease infinite;
       pointer-events: none;
     }
@@ -92,7 +140,13 @@
     .slide {
       width: 100%;
       scroll-snap-align: start;
-      padding: 72px 24px calc(env(safe-area-inset-bottom, 16px) + 48px);
+      padding: 80px 24px calc(env(safe-area-inset-bottom, 16px) + 56px);
+    }
+
+    @media (min-width: 768px) {
+      .slide { padding-left: 48px; padding-right: 48px; }
+      .slide--projects,
+      .slide--contact { max-width: 1100px; margin: 0 auto; }
     }
 
     .slide--intro,
@@ -109,9 +163,7 @@
 
     /* ── Slide backgrounds ── */
     .slide--intro {
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-soft), transparent),
-        var(--bg);
+      background: transparent;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -119,47 +171,62 @@
       text-align: center;
     }
     .slide--projects {
-      background:
-        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(168,85,247,0.15), transparent),
-        var(--bg);
+      background: transparent;
     }
     .slide--contact {
-      background:
-        radial-gradient(ellipse 60% 50% at 0% 100%, rgba(34,211,238,0.12), transparent),
-        var(--bg);
+      background: transparent;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
     /* ── Page 1: Intro ── */
+    .avatar-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .avatar-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: var(--gradient);
+      opacity: 0.85;
+    }
     .avatar {
-      width: 120px;
-      height: 120px;
+      position: relative;
+      width: 128px;
+      height: 128px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(255,255,255,0.15);
-      margin-bottom: 24px;
-      box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+      border: 3px solid var(--bg);
+      box-shadow: var(--shadow-glow);
     }
     .intro-name {
-      font-size: clamp(2rem, 8vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 8px;
+      font-size: clamp(2.25rem, 9vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+      line-height: 1.05;
     }
     .intro-role {
       font-size: 1.125rem;
-      color: var(--accent);
-      font-weight: 500;
+      font-weight: 600;
       margin-bottom: 20px;
     }
     .intro-tagline {
-      max-width: 420px;
+      max-width: 460px;
       color: var(--muted);
-      line-height: 1.6;
-      font-size: 1rem;
-      margin-bottom: 32px;
+      line-height: 1.7;
+      font-size: 1.05rem;
+      margin-bottom: 36px;
     }
     .intro-tags {
       display: flex;
@@ -168,28 +235,42 @@
       justify-content: center;
     }
     .tag {
-      padding: 6px 14px;
+      padding: 8px 16px;
       background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
       border-radius: 999px;
       font-size: 13px;
+      font-weight: 500;
       color: var(--muted);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tag:hover {
+      border-color: rgba(139, 92, 246, 0.35);
+      color: var(--text);
+      background: var(--surface-hover);
     }
 
     /* ── Page 2: Projects + About ── */
     .section-label {
+      display: inline-block;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      font-weight: 600;
-      margin-bottom: 12px;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: #c4b5fd;
     }
     .section-title {
-      font-size: clamp(1.5rem, 5vw, 2rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      line-height: 1.1;
     }
 
     /* Project cards — Pinterest-style masonry */
@@ -206,22 +287,23 @@
       margin-bottom: 16px;
       display: inline-block;
       width: 100%;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      backdrop-filter: blur(16px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .project-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(99,102,241,0.4);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(139, 92, 246, 0.45);
+      box-shadow: var(--shadow), var(--shadow-glow);
     }
     .project-screenshot {
       width: 100%;
       object-fit: cover;
       display: block;
-      background: rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
     }
     .project-card--tall .project-screenshot { aspect-ratio: 3 / 4; }
     .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
@@ -234,32 +316,42 @@
       font-size: 14px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .project-body { padding: 16px 18px 20px; }
+    .project-body { padding: 18px 20px 22px; }
     .project-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
     }
     .project-desc {
       font-size: 14px;
       color: var(--muted);
-      line-height: 1.5;
-      margin-bottom: 12px;
+      line-height: 1.6;
+      margin-bottom: 14px;
     }
     .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 13px;
-      color: var(--accent);
+      font-weight: 600;
+      color: #a5b4fc;
       text-decoration: none;
-      font-weight: 500;
+      transition: color 0.2s, gap 0.2s;
     }
-    .project-link:hover { text-decoration: underline; }
+    .project-link:hover {
+      color: #c4b5fd;
+      gap: 10px;
+    }
 
     /* About section on page 2 */
     .about-block {
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-glow);
     }
     .about-block p {
       color: var(--muted);
@@ -277,17 +369,18 @@
 
     /* ── Page 3: Contact ── */
     .contact-heading {
-      font-size: clamp(2rem, 7vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
+      font-size: clamp(2.25rem, 8vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 14px;
+      line-height: 1.05;
     }
     .contact-sub {
       color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 36px;
-      max-width: 400px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 420px;
     }
     .contact-links {
       display: flex;
@@ -297,40 +390,43 @@
     .contact-btn {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 16px 20px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      gap: 16px;
+      padding: 18px 22px;
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
       text-decoration: none;
-      font-weight: 500;
-      transition: background 0.2s, border-color 0.2s;
+      font-weight: 600;
+      backdrop-filter: blur(16px);
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
     .contact-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(99,102,241,0.4);
+      transform: translateX(4px);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-glow);
     }
     .contact-btn .icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--accent-soft);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--gradient-subtle);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 20px;
+      flex-shrink: 0;
     }
-    .contact-btn .label { font-size: 15px; }
-    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 400; }
+    .contact-btn .label { font-size: 15px; font-weight: 700; }
+    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
 
     /* Tap zones for desktop */
     .tap-zone {
-      position: fixed;
       left: 0;
       right: 0;
       height: 30%;
-      z-index: 90;
       cursor: pointer;
     }
     .tap-zone--top { top: 60px; }
@@ -357,13 +453,15 @@
     <!-- ═══ PAGE 1: INTRO ═══ -->
     <section class="slide slide--intro" aria-label="Introduction">
       <!-- Replace with your photo: src="images/avatar.jpg" -->
-      <img
-        class="avatar"
-        src="https://api.dicebear.com/7.x/notionists/svg?seed=You"
-        alt="Your Name"
-      />
+      <div class="avatar-wrap">
+        <img
+          class="avatar"
+          src="https://api.dicebear.com/7.x/notionists/svg?seed=You"
+          alt="Your Name"
+        />
+      </div>
       <h1 class="intro-name">Your Name</h1>
-      <p class="intro-role">Product Designer & Developer</p>
+      <p class="intro-role gradient-text">Product Designer & Developer</p>
       <p class="intro-tagline">
         I craft thoughtful digital experiences — from concept to shipped product.
         Based in San Francisco, open to remote work.
@@ -382,8 +480,6 @@
       <h2 class="section-title">Projects</h2>
 
       <div class="projects-grid">
-
-        <!-- PROJECT 1 — replace screenshot src -->
         <article class="project-card project-card--tall">
           <img
             class="project-screenshot"
@@ -461,7 +557,7 @@
     <!-- ═══ PAGE 3: CONTACT ═══ -->
     <section class="slide slide--contact" aria-label="Contact">
       <p class="section-label">Get in touch</p>
-      <h2 class="contact-heading">Let's work<br/>together.</h2>
+      <h2 class="contact-heading">Let's work<br/><span class="gradient-text">together.</span></h2>
       <p class="contact-sub">
         Have a project in mind or just want to say hi? I'd love to hear from you.
       </p>
