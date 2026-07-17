@@ -5,66 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Your Name — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0a0f;
-      --surface: rgba(255,255,255,0.06);
-      --text: #f5f5f7;
-      --muted: rgba(245,245,247,0.65);
-      --accent: #6366f1;
-      --accent-soft: rgba(99,102,241,0.25);
-      --radius: 16px;
+      --bg: #06070b;
+      --bg-elevated: #0d0f16;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --accent-2: #06b6d4;
+      --accent-3: #f472b6;
+      --accent-soft: rgba(139, 92, 246, 0.18);
+      --gradient: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #f472b6 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(139,92,246,0.35), rgba(6,182,212,0.2));
+      --radius: 20px;
+      --radius-sm: 12px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.15);
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      overflow-y: scroll;
+      height: 100%;
     }
 
     html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Progress bars (story style) ── */
+    body {
+      overflow: visible;
+      min-height: 100%;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 10%, rgba(139, 92, 246, 0.22), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 85% 20%, rgba(6, 182, 212, 0.16), transparent 50%),
+        radial-gradient(ellipse 55% 40% at 50% 90%, rgba(244, 114, 182, 0.12), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .progress,
+    .swipe-hint,
+    .stories {
+      position: relative;
+      z-index: 1;
+    }
+
     .progress {
       position: fixed;
-      top: env(safe-area-inset-top, 12px);
-      left: 16px;
-      right: 16px;
       z-index: 100;
+    }
+
+    .swipe-hint {
+      position: fixed;
+      z-index: 50;
+    }
+
+    /* ── Progress bars (story style) ── */
+    .progress {
+      top: env(safe-area-inset-top, 12px);
+      left: 20px;
+      right: 20px;
       display: flex;
-      gap: 6px;
-      padding-top: 8px;
+      gap: 8px;
+      padding-top: 10px;
     }
     .progress-segment {
       flex: 1;
-      height: 3px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
       overflow: hidden;
+      backdrop-filter: blur(8px);
     }
     .progress-fill {
       height: 100%;
       width: 0%;
-      background: #fff;
-      border-radius: 2px;
+      background: var(--gradient);
+      border-radius: 999px;
       transition: width 0.35s ease;
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
     }
     .progress-segment.done .progress-fill { width: 100%; }
     .progress-segment.active .progress-fill { width: 100%; }
 
     /* ── Swipe hint ── */
     .swipe-hint {
-      position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 16px) + 72px);
       left: 50%;
       transform: translateX(-50%);
       font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       color: var(--muted);
-      z-index: 50;
       animation: pulse 2s ease infinite;
       pointer-events: none;
     }
@@ -76,180 +128,365 @@
 
     /* ── Story container ── */
     .stories {
-      display: flex;
-      flex-direction: column;
-      width: 100vw;
-      height: 300vh;
-      height: 300dvh;
-      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform;
+      width: 100%;
     }
-    .stories.no-transition { transition: none; }
 
     .slide {
       width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      flex-shrink: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 72px 24px calc(env(safe-area-inset-bottom, 16px) + 100px);
+      scroll-snap-align: start;
+      padding: 80px 24px calc(env(safe-area-inset-bottom, 16px) + 56px);
+    }
+
+    @media (min-width: 768px) {
+      .slide { padding-left: 48px; padding-right: 48px; }
+      .slide--intro,
+      .slide--projects,
+      .slide--contact { max-width: 1280px; margin: 0 auto; }
+    }
+
+    .slide--intro,
+    .slide--contact {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-snap-stop: always;
+    }
+
+    .slide--projects {
+      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     /* ── Slide backgrounds ── */
     .slide--intro {
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-soft), transparent),
-        var(--bg);
+      background: transparent;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
+      justify-content: center;
     }
     .slide--projects {
-      background:
-        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(168,85,247,0.15), transparent),
-        var(--bg);
+      background: transparent;
     }
     .slide--contact {
-      background:
-        radial-gradient(ellipse 60% 50% at 0% 100%, rgba(34,211,238,0.12), transparent),
-        var(--bg);
+      background: transparent;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    /* ── Page 1: Intro ── */
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ── Page 1: Intro split layout ── */
+    .intro-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      width: 100%;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .intro-layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+      }
+      .intro-photo {
+        margin: 0 0 0 auto;
+        max-width: 100%;
+      }
+    }
+    .intro-content {
+      text-align: left;
+    }
+    .intro-photo {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(13, 15, 22, 0.72);
+      box-shadow: var(--shadow), var(--shadow-glow);
+    }
+    .intro-photo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 2px;
+      background: var(--gradient);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .intro-photo img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      border: 3px solid rgba(255,255,255,0.15);
-      margin-bottom: 24px;
-      box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+      display: block;
+    }
+    .intro-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+    }
+    .intro-photo-placeholder strong {
+      color: var(--text);
+      font-size: 15px;
+    }
+    .intro-photo-placeholder code {
+      font-size: 12px;
+      color: #c4b5fd;
     }
     .intro-name {
-      font-size: clamp(2rem, 8vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 8px;
+      font-size: clamp(2.25rem, 9vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+      line-height: 1.05;
     }
     .intro-role {
       font-size: 1.125rem;
-      color: var(--accent);
-      font-weight: 500;
+      font-weight: 600;
       margin-bottom: 20px;
     }
     .intro-tagline {
-      max-width: 420px;
+      max-width: 460px;
       color: var(--muted);
-      line-height: 1.6;
-      font-size: 1rem;
-      margin-bottom: 32px;
+      line-height: 1.7;
+      font-size: 1.05rem;
+      margin-bottom: 28px;
     }
     .intro-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: center;
     }
     .tag {
-      padding: 6px 14px;
+      padding: 8px 16px;
       background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
       border-radius: 999px;
       font-size: 13px;
+      font-weight: 500;
       color: var(--muted);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tag:hover {
+      border-color: rgba(139, 92, 246, 0.35);
+      color: var(--text);
+      background: var(--surface-hover);
     }
 
-    /* ── Page 2: Projects + About ── */
+    /* ── Page 2: Projects + About split ── */
+    .projects-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      width: 100%;
+    }
+    @media (min-width: 900px) {
+      .slide--projects {
+        display: flex;
+        align-items: center;
+        min-height: 100dvh;
+        padding-top: 88px;
+        padding-bottom: 48px;
+      }
+      .projects-layout {
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+        gap: 36px;
+        align-items: start;
+      }
+      .projects-sidebar-area {
+        position: sticky;
+        top: 88px;
+        align-self: start;
+        min-height: min(85dvh, 920px);
+      }
+      .about-sidebar {
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+      }
+      .projects-layout.has-preview .about-sidebar {
+        display: none;
+      }
+      .project-hover-preview {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        display: block;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: var(--radius);
+        box-shadow: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .project-hover-preview.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+      .project-hover-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+      }
+      .projects-main .section-title {
+        margin-bottom: 16px;
+        font-size: clamp(1.25rem, 3vw, 1.6rem);
+      }
+      .projects-main .projects-split {
+        margin-bottom: 0;
+      }
+      .projects-main .project-body {
+        padding: 14px 16px 16px;
+      }
+      .projects-main .project-title { font-size: 1rem; margin-bottom: 6px; }
+      .projects-main .project-desc { font-size: 13px; margin-bottom: 0; }
+      .projects-main .projects-stack { gap: 12px; }
+      .projects-main .project-card--tall .project-visual { height: 240px; }
+      .projects-main .project-card--square .project-visual { height: 200px; }
+      .projects-main .project-card--wide .project-visual { height: 160px; }
+    }
+
     .section-label {
+      display: inline-block;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      font-weight: 600;
-      margin-bottom: 12px;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: #c4b5fd;
     }
     .section-title {
-      font-size: clamp(1.5rem, 5vw, 2rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      line-height: 1.1;
     }
 
-    /* Project cards — Pinterest-style masonry */
-    .projects-grid {
-      columns: 2;
-      column-gap: 16px;
+    /* Project cards — split sections */
+    .projects-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
       margin-bottom: 48px;
     }
-    @media (min-width: 640px) {
-      .projects-grid { columns: 3; }
+    @media (min-width: 768px) {
+      .projects-split {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+    }
+    .projects-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
     .project-card {
-      break-inside: avoid;
-      margin-bottom: 16px;
-      display: inline-block;
       width: 100%;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      backdrop-filter: blur(16px);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
     }
     .project-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(99,102,241,0.4);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      border-color: rgba(139, 92, 246, 0.45);
+      box-shadow: var(--shadow), var(--shadow-glow);
     }
+    .project-visual {
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: rgba(13, 15, 22, 0.9);
+      isolation: isolate;
+    }
+    .project-card--tall .project-visual { height: 260px; }
+    .project-card--square .project-visual { height: 220px; }
+    .project-card--wide .project-visual { height: 180px; }
     .project-screenshot {
       width: 100%;
+      height: 100%;
       object-fit: cover;
+      object-position: center;
       display: block;
-      background: rgba(0,0,0,0.3);
     }
-    .project-card--tall .project-screenshot { aspect-ratio: 3 / 4; }
-    .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
-    .project-card--wide .project-screenshot { aspect-ratio: 16 / 10; }
+    .projects-sidebar-area {
+      position: relative;
+    }
+    @media (max-width: 899px) {
+      .project-hover-preview {
+        display: none;
+      }
+    }
     .project-screenshot.placeholder {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100%;
+      height: 100%;
       color: var(--muted);
       font-size: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
     }
-    .project-body { padding: 16px 18px 20px; }
+    .project-body { padding: 18px 20px 22px; }
     .project-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
     }
     .project-desc {
       font-size: 14px;
       color: var(--muted);
-      line-height: 1.5;
-      margin-bottom: 12px;
+      line-height: 1.6;
+      margin-bottom: 0;
     }
-    .project-link {
-      font-size: 13px;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .project-link:hover { text-decoration: underline; }
 
     /* About section on page 2 */
     .about-block {
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-glow);
     }
     .about-block p {
       color: var(--muted);
@@ -266,65 +503,154 @@
     }
 
     /* ── Page 3: Contact ── */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+      width: 100%;
+      align-items: start;
+    }
+    @media (min-width: 900px) {
+      .contact-layout {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 48px;
+        align-items: center;
+      }
+    }
     .contact-heading {
-      font-size: clamp(2rem, 7vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
+      font-size: clamp(2.25rem, 8vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 14px;
+      line-height: 1.05;
     }
     .contact-sub {
       color: var(--muted);
-      font-size: 1rem;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 420px;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      pointer-events: auto;
+      -webkit-user-select: text;
+      user-select: text;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+    .form-field textarea {
+      min-height: 140px;
+      resize: vertical;
       line-height: 1.6;
-      margin-bottom: 36px;
-      max-width: 400px;
+    }
+    .form-field textarea::placeholder,
+    .form-field input::placeholder {
+      color: rgba(148, 163, 184, 0.75);
+    }
+    .form-submit {
+      margin-top: 4px;
+      padding: 14px 20px;
+      background: var(--gradient);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .form-submit:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+    .contact-sidebar-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
     .contact-links {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
     .contact-btn {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 16px 20px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(13, 15, 22, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       color: var(--text);
       text-decoration: none;
-      font-weight: 500;
-      transition: background 0.2s, border-color 0.2s;
+      font-weight: 600;
+      backdrop-filter: blur(16px);
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
     .contact-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(99,102,241,0.4);
+      transform: translateX(3px);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-glow);
     }
     .contact-btn .icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
-      background: var(--accent-soft);
+      background: var(--gradient-subtle);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
+      flex-shrink: 0;
     }
-    .contact-btn .label { font-size: 15px; }
-    .contact-btn .sub { font-size: 12px; color: var(--muted); font-weight: 400; }
-
-    /* Tap zones for desktop */
-    .tap-zone {
-      position: fixed;
-      left: 0;
-      right: 0;
-      height: 30%;
-      z-index: 90;
-      cursor: pointer;
-    }
-    .tap-zone--top { top: 60px; }
-    .tap-zone--bottom { bottom: 80px; }
+    .contact-btn .label { font-size: 13px; font-weight: 700; }
+    .contact-btn .sub { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
   </style>
 </head>
 <body>
@@ -336,155 +662,247 @@
     <div class="progress-segment"><div class="progress-fill"></div></div>
   </div>
 
-  <p class="swipe-hint" id="swipeHint">Swipe down ↓</p>
-
-  <!-- Tap zones (desktop) -->
-  <div class="tap-zone tap-zone--top"    data-dir="-1" aria-label="Previous"></div>
-  <div class="tap-zone tap-zone--bottom" data-dir="1"  aria-label="Next"></div>
+  <p class="swipe-hint" id="swipeHint">Scroll down ↓</p>
 
   <div class="stories" id="stories">
 
     <!-- ═══ PAGE 1: INTRO ═══ -->
     <section class="slide slide--intro" aria-label="Introduction">
-      <!-- Replace with your photo: src="images/avatar.jpg" -->
-      <img
-        class="avatar"
-        src="https://api.dicebear.com/7.x/notionists/svg?seed=You"
-        alt="Your Name"
-      />
-      <h1 class="intro-name">Your Name</h1>
-      <p class="intro-role">Product Designer & Developer</p>
-      <p class="intro-tagline">
-        I craft thoughtful digital experiences — from concept to shipped product.
-        Based in San Francisco, open to remote work.
-      </p>
-      <div class="intro-tags">
-        <span class="tag">UI/UX</span>
-        <span class="tag">React</span>
-        <span class="tag">Figma</span>
-        <span class="tag">Design Systems</span>
+      <div class="intro-layout">
+        <div class="intro-content">
+          <h1 class="intro-name">Your Name</h1>
+          <p class="intro-role gradient-text">Product Designer & Developer</p>
+          <p class="intro-tagline">
+            I craft thoughtful digital experiences — from concept to shipped product.
+            Based in San Francisco, open to remote work.
+          </p>
+          <div class="intro-tags">
+            <span class="tag">UI/UX</span>
+            <span class="tag">React</span>
+            <span class="tag">Figma</span>
+            <span class="tag">Canva</span>
+          </div>
+        </div>
+
+        <!-- Replace src with your photo: images/your-photo.jpg -->
+        <div class="intro-photo">
+          <img
+            src="images/your-photo.jpg"
+            alt="Your Name"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="intro-photo-placeholder" style="display: none;">
+            <strong>Add your photo</strong>
+            <span>Save your image as<br/><code>images/your-photo.jpg</code></span>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ═══ PAGE 2: PROJECTS + ABOUT ═══ -->
     <section class="slide slide--projects" aria-label="Projects and About">
-      <p class="section-label">Selected Work</p>
-      <h2 class="section-title">Projects</h2>
+      <div class="projects-layout">
+        <div class="projects-main">
+          <p class="section-label">Selected Work</p>
 
-      <div class="projects-grid">
+          <div class="projects-split">
+            <!-- Left: Arts & Graphic Design -->
+            <div class="projects-section projects-section--arts">
+              <h2 class="section-title">Arts & Graphic Design</h2>
+              <div class="projects-stack">
+                <article class="project-card project-card--tall" tabindex="0">
+                  <div class="project-visual">
+                    <img
+                      class="project-screenshot"
+                      src="images/EmployeeService.PNG"
+                      data-full-src="images/EmployeeService.PNG"
+                      alt="Graphic design project one"
+                      onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/EmployeeService.PNG</div>'"
+                    />
+                  </div>
+                  <div class="project-body">
+                    <h3 class="project-title">Design One</h3>
+                    <p class="project-desc">
+                      A poster, illustration, or graphic design piece you created.
+                    </p>
+                  </div>
+                </article>
 
-        <!-- PROJECT 1 — replace screenshot src -->
-        <article class="project-card project-card--tall">
-          <img
-            class="project-screenshot"
-            src="images/project-1.png"
-            alt="Project One screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-1.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project One</h3>
-            <p class="project-desc">
-              A brief one-liner about what you built and the impact it had.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+                <article class="project-card project-card--square" tabindex="0">
+                  <div class="project-visual">
+                    <img
+                      class="project-screenshot"
+                      src="images/Arts.png"
+                      data-full-src="images/Arts.png"
+                      alt="Graphic design project three"
+                      onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/Arts.png</div>'"
+                    />
+                  </div>
+                  <div class="project-body">
+                    <h3 class="project-title">Design Three</h3>
+                    <p class="project-desc">
+                      Another art or branding project from your portfolio.
+                    </p>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <!-- Right: App Prototypes -->
+            <div class="projects-section projects-section--apps">
+              <h2 class="section-title">App Prototypes</h2>
+              <div class="projects-stack">
+                <article class="project-card project-card--wide" tabindex="0">
+                  <div class="project-visual">
+                    <img
+                      class="project-screenshot"
+                      src="images/GiftApp.png"
+                      data-full-src="images/GiftApp.png"
+                      alt="App prototype two"
+                      onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
+                    />
+                  </div>
+                  <div class="project-body">
+                    <h3 class="project-title">App Prototype Two</h3>
+                    <p class="project-desc">
+                      A mobile or web app prototype — role, tools, and outcome.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="project-card project-card--wide" tabindex="0">
+                  <div class="project-visual">
+                    <img
+                      class="project-screenshot"
+                      src="images/PetApp.png"
+                      data-full-src="images/PetApp.png"
+                      alt="App prototype four"
+                      onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-4.png</div>'"
+                    />
+                  </div>
+                  <div class="project-body">
+                    <h3 class="project-title">App Prototype Four</h3>
+                    <p class="project-desc">
+                      Another UI/UX prototype showcasing your product design work.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="project-card project-card--wide" tabindex="0">
+                  <div class="project-visual">
+                    <img
+                      class="project-screenshot"
+                      src="images/TrackerApp.png"
+                      data-full-src="images/TrackerApp.png"
+                      alt="App prototype five"
+                      onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-5.png</div>'"
+                    />
+                  </div>
+                  <div class="project-body">
+                    <h3 class="project-title">App Prototype Five</h3>
+                    <p class="project-desc">
+                      A third app prototype with the same wide layout as above.
+                    </p>
+                  </div>
+                </article>
+              </div>
+            </div>
           </div>
-        </article>
+        </div>
 
-        <!-- PROJECT 2 -->
-        <article class="project-card project-card--wide">
-          <img
-            class="project-screenshot"
-            src="images/project-2.png"
-            alt="Project Two screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-2.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project Two</h3>
-            <p class="project-desc">
-              Another project summary — tech stack, role, or outcome.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
+        <div class="projects-sidebar-area">
+          <aside class="about-sidebar">
+            <p class="section-label">About Me</p>
+            <h2 class="section-title">More about me</h2>
+            <div class="about-block">
+              <p>
+                I'm a designer-developer hybrid with 5+ years building products for
+                startups and agencies. I care about accessibility, performance, and
+                details that make interfaces feel effortless.
+              </p>
+              <p>
+                When I'm not designing, you'll find me hiking, reading sci-fi, or
+                contributing to open source.
+              </p>
+              <div class="skills-row">
+                <span class="tag">JavaScript</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">Next.js</span>
+                <span class="tag">Tailwind</span>
+                <span class="tag">Node.js</span>
+              </div>
+            </div>
+          </aside>
+
+          <div class="project-hover-preview" id="projectHoverPreview" aria-hidden="true">
+            <img src="" alt="" />
           </div>
-        </article>
-
-        <!-- PROJECT 3 (duplicate block to add more) -->
-        <article class="project-card project-card--square">
-          <img
-            class="project-screenshot"
-            src="images/project-3.png"
-            alt="Project Three screenshot"
-            onerror="this.outerHTML='<div class=\'project-screenshot placeholder\'>Add images/project-3.png</div>'"
-          />
-          <div class="project-body">
-            <h3 class="project-title">Project Three</h3>
-            <p class="project-desc">
-              Optional third project — remove this card if you only need two.
-            </p>
-            <a class="project-link" href="#" target="_blank" rel="noopener">View project →</a>
-          </div>
-        </article>
-
-      </div>
-
-      <p class="section-label">About Me</p>
-      <h2 class="section-title">More about me</h2>
-      <div class="about-block">
-        <p>
-          I'm a designer-developer hybrid with 5+ years building products for
-          startups and agencies. I care about accessibility, performance, and
-          details that make interfaces feel effortless.
-        </p>
-        <p>
-          When I'm not designing, you'll find me hiking, reading sci-fi, or
-          contributing to open source.
-        </p>
-        <div class="skills-row">
-          <span class="tag">JavaScript</span>
-          <span class="tag">TypeScript</span>
-          <span class="tag">Next.js</span>
-          <span class="tag">Tailwind</span>
-          <span class="tag">Node.js</span>
         </div>
       </div>
     </section>
 
     <!-- ═══ PAGE 3: CONTACT ═══ -->
+    <!-- Replace you@email.com in the form action with your real email -->
     <section class="slide slide--contact" aria-label="Contact">
-      <p class="section-label">Get in touch</p>
-      <h2 class="contact-heading">Let's work<br/>together.</h2>
-      <p class="contact-sub">
-        Have a project in mind or just want to say hi? I'd love to hear from you.
-      </p>
+      <div class="contact-layout">
+        <div class="contact-main">
+          <p class="section-label">Get in touch</p>
+          <h2 class="contact-heading">Let's work<br/><span class="gradient-text">together.</span></h2>
+          <p class="contact-sub">
+            Have a project in mind or just want to say hi? Send me a message below.
+          </p>
 
-      <div class="contact-links">
-        <a class="contact-btn" href="mailto:you@email.com">
-          <span class="icon">✉️</span>
-          <span>
-            <div class="label">Email</div>
-            <div class="sub">you@email.com</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">
-          <span class="icon">💼</span>
-          <span>
-            <div class="label">LinkedIn</div>
-            <div class="sub">linkedin.com/in/yourprofile</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
-          <span class="icon">🐙</span>
-          <span>
-            <div class="label">GitHub</div>
-            <div class="sub">github.com/yourusername</div>
-          </span>
-        </a>
-        <a class="contact-btn" href="https://twitter.com/yourhandle" target="_blank" rel="noopener">
-          <span class="icon">🐦</span>
-          <span>
-            <div class="label">Twitter / X</div>
-            <div class="sub">@yourhandle</div>
-          </span>
-        </a>
+          <form
+            class="contact-form"
+            action="https://formsubmit.co/you@email.com"
+            method="POST"
+          >
+            <input type="hidden" name="_subject" value="New message from your portfolio" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+
+            <div class="form-field">
+              <label for="contact-name">Name</label>
+              <input type="text" id="contact-name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-field">
+              <label for="contact-email">Email</label>
+              <input type="email" id="contact-email" name="email" placeholder="you@example.com" required />
+            </div>
+            <div class="form-field">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" placeholder="Tell me about your project..." required></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send message</button>
+          </form>
+        </div>
+
+        <div class="contact-sidebar">
+          <p class="contact-sidebar-title">Or reach me directly</p>
+          <div class="contact-links">
+            <a class="contact-btn" href="mailto:you@email.com">
+              <span class="icon">✉️</span>
+              <span>
+                <div class="label">Email</div>
+                <div class="sub">you@email.com</div>
+              </span>
+            </a>
+            <a class="contact-btn" href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">
+              <span class="icon">💼</span>
+              <span>
+                <div class="label">LinkedIn</div>
+                <div class="sub">linkedin.com/in/yourprofile</div>
+              </span>
+            </a>
+            <a class="contact-btn" href="https://github.com/yourusername" target="_blank" rel="noopener">
+              <span class="icon">🐙</span>
+              <span>
+                <div class="label">GitHub</div>
+                <div class="sub">github.com/yourusername</div>
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -494,120 +912,97 @@
     const TOTAL = 3;
     let current = 0;
 
-    const stories   = document.getElementById('stories');
+    const slides    = document.querySelectorAll('.slide');
     const segments  = document.querySelectorAll('.progress-segment');
     const swipeHint = document.getElementById('swipeHint');
 
-    function goTo(index) {
+    function updateProgress(index) {
       current = Math.max(0, Math.min(TOTAL - 1, index));
-      stories.style.transform = `translateY(-${current * 100}vh)`;
-
       segments.forEach((seg, i) => {
         seg.classList.remove('active', 'done');
         if (i < current) seg.classList.add('done');
         if (i === current) seg.classList.add('active');
       });
-
       if (current > 0) swipeHint.classList.add('hidden');
       if (current === TOTAL - 1) swipeHint.textContent = '';
     }
 
-    function next() { goTo(current + 1); }
-    function prev() { goTo(current - 1); }
-
-    function getActiveSlide() {
-      return stories.children[current];
+    function scrollToSlide(index) {
+      const target = Math.max(0, Math.min(TOTAL - 1, index));
+      slides[target].scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function isSlideScrollable(slide) {
-      return slide && slide.scrollHeight > slide.clientHeight + 8;
-    }
-
-    function isAtSlideTop(slide) {
-      return !slide || slide.scrollTop <= 32;
-    }
-
-    function isAtSlideBottom(slide) {
-      if (!slide) return true;
-      const remaining = slide.scrollHeight - slide.clientHeight - slide.scrollTop;
-      return remaining <= 32;
-    }
-
-    function canNavigate(dir) {
-      const slide = getActiveSlide();
-      if (!isSlideScrollable(slide)) return true;
-      return dir > 0 ? isAtSlideBottom(slide) : isAtSlideTop(slide);
-    }
-
-    // Swipe detection
-    let startX = 0, startY = 0, dragging = false;
-    let touchStartedOnSlide = false;
-
-    document.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      dragging = true;
-      const slide = getActiveSlide();
-      touchStartedOnSlide = slide && slide.contains(e.target);
-    }, { passive: true });
-
-    document.addEventListener('touchend', e => {
-      if (!dragging) return;
-      dragging = false;
-      const dx = e.changedTouches[0].clientX - startX;
-      const dy = e.changedTouches[0].clientY - startY;
-      if (Math.abs(dy) <= 50 || Math.abs(dy) <= Math.abs(dx)) return;
-
-      const slide = getActiveSlide();
-      if (touchStartedOnSlide && isSlideScrollable(slide)) {
-        if (dy < 0 && !isAtSlideBottom(slide)) return;
-        if (dy > 0 && !isAtSlideTop(slide)) return;
-      }
-
-      if (dy < 0) next();
-      else prev();
-    }, { passive: true });
-
-    // Mouse wheel (desktop)
-    let wheelLock = false;
-    document.addEventListener('wheel', e => {
-      if (wheelLock) return;
-      if (Math.abs(e.deltaY) < 20) return;
-
-      const dir = e.deltaY > 0 ? 1 : -1;
-      const slide = getActiveSlide();
-
-      if (isSlideScrollable(slide)) {
-        if (dir > 0 && !isAtSlideBottom(slide)) return;
-        if (dir < 0 && !isAtSlideTop(slide)) return;
-      }
-
-      e.preventDefault();
-      wheelLock = true;
-      dir > 0 ? next() : prev();
-      setTimeout(() => { wheelLock = false; }, 450);
-    }, { passive: false });
-
-    // Tap zones
-    document.querySelectorAll('[data-dir]').forEach(el => {
-      el.addEventListener('click', () => {
-        const dir = parseInt(el.dataset.dir);
-        if (dir > 0) next();
-        else prev();
+    function getActiveSlideIndex() {
+      const midpoint = window.innerHeight * 0.35;
+      let active = 0;
+      slides.forEach((slide, i) => {
+        const { top, bottom } = slide.getBoundingClientRect();
+        if (top <= midpoint && bottom > midpoint) active = i;
       });
-    });
+      return active;
+    }
 
-    // Keyboard
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        updateProgress(getActiveSlideIndex());
+        scrollTicking = false;
+      });
+    }, { passive: true });
+
+    // Keyboard — skip when typing in form fields
     document.addEventListener('keydown', e => {
+      if (e.target.closest('input, textarea, select, button')) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        if (canNavigate(1)) next();
+        e.preventDefault();
+        scrollToSlide(current + 1);
       }
       if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        if (canNavigate(-1)) prev();
+        e.preventDefault();
+        scrollToSlide(current - 1);
       }
     });
 
-    goTo(0);
+    updateProgress(0);
+
+    // Project hover preview — full image on right over About Me
+    const projectsLayout = document.querySelector('.projects-layout');
+    const projectPreview = document.getElementById('projectHoverPreview');
+    const projectPreviewImg = projectPreview?.querySelector('img');
+
+    function showProjectPreview(card) {
+      const img = card.querySelector('img.project-screenshot');
+      if (!img || img.tagName !== 'IMG' || !projectPreview || !projectPreviewImg) return;
+
+      const fullSrc = img.dataset.fullSrc || img.currentSrc || img.src;
+      if (!fullSrc) return;
+
+      projectPreviewImg.src = fullSrc;
+      projectPreviewImg.alt = img.alt || '';
+      projectPreviewImg.removeAttribute('width');
+      projectPreviewImg.removeAttribute('height');
+      projectPreview.classList.add('is-visible');
+      projectPreview.setAttribute('aria-hidden', 'false');
+      projectsLayout?.classList.add('has-preview');
+    }
+
+    function hideProjectPreview() {
+      if (!projectPreview) return;
+      projectPreview.classList.remove('is-visible');
+      projectPreview.setAttribute('aria-hidden', 'true');
+      projectsLayout?.classList.remove('has-preview');
+    }
+
+    document.querySelectorAll('.project-card').forEach(card => {
+      card.addEventListener('mouseenter', () => showProjectPreview(card));
+      card.addEventListener('mouseleave', hideProjectPreview);
+      card.addEventListener('focusin', () => showProjectPreview(card));
+      card.addEventListener('focusout', e => {
+        if (!card.contains(e.relatedTarget)) hideProjectPreview();
+      });
+    });
   </script>
 </body>
 </html>
