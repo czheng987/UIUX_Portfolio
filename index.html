@@ -345,11 +345,11 @@
       .projects-main .projects-column { gap: 12px; }
       .projects-main .project-card--tall .project-screenshot {
         aspect-ratio: 3 / 4;
-        max-height: 190px;
+        min-height: 220px;
       }
       .projects-main .project-card--square .project-screenshot {
         aspect-ratio: 1 / 1;
-        max-height: 165px;
+        min-height: 200px;
       }
       .projects-main .project-card--wide .project-screenshot { aspect-ratio: 16 / 9; }
     }
@@ -413,8 +413,8 @@
       display: block;
       background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
     }
-    .project-card--tall .project-screenshot { aspect-ratio: 3 / 4; }
-    .project-card--square .project-screenshot { aspect-ratio: 1 / 1; }
+    .project-card--tall .project-screenshot { aspect-ratio: 3 / 4; min-height: 200px; }
+    .project-card--square .project-screenshot { aspect-ratio: 1 / 1; min-height: 180px; }
     .project-card--wide .project-screenshot { aspect-ratio: 16 / 10; }
     .project-screenshot.placeholder {
       display: flex;
